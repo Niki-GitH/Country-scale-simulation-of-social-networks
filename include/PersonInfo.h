@@ -1,5 +1,6 @@
 #pragma once
 #include "defines.h"
+#include "INIConfigParser.h"
 #include <string>
 #include <vector>
 #include <stdarg.h>
@@ -35,6 +36,19 @@ private:
 	_dob				m_stDeathDate;
 	FinancialSatus_		m_stFinancialStatus;
 	int 				m_nAge;
+	double				m_dIncome;
+	std::vector < std::pair<std::string, std::string>> m_schoolsattended;
+	std::vector < std::pair<std::string, std::string>> m_OfficePlaces;
+	std::vector<CPersonInfo> m_vfriends;
+	std::vector<CPersonInfo> m_vChildren;
+	std::vector<CPersonInfo> m_vSpouses;
+	std::vector<CPersonInfo> m_vParents;
+	std::vector<CPersonInfo> m_vColleagues;
+	std::vector<CPersonInfo> m_vClassmates;
+	std::vector<CPersonInfo> m_vCommunity_members;
+	std::vector<CPersonInfo> m_vCommunication_contacts;
+	std::vector<CPersonInfo> m_vTransportation_contacts;
+
 private:
 	//Constructor
 	CPersonInfo();
@@ -43,10 +57,10 @@ private:
 	void UpdateGraduationDetatils(std::string GraduationType);
 
 	//
-	void UpdateFamilyDetatils(std::string childName);
+	void UpdateFamilyDetatils(std::string childName, CPersonInfo& othrPrsn);
 
 	//
-	void UpdateMaritalDetatils(std::string spouseName);
+	void UpdateMaritalDetatils(std::string spouseName, CPersonInfo& othrPrsn);
 
 	//format string
 	const std::string vformat(const char * const zcFormat, ...);
@@ -81,7 +95,7 @@ public:
 	}
 
 	//add new event to person's life
-	void AddEvent(const PersonEvent& newEvent);
+	void AddEvent(const PersonEvent& newEvent, CPersonInfo& othrPrsn);
 
 	//Return a formated string to write in CSV
 	const std::string GetFormatedString();
@@ -320,6 +334,12 @@ public:
 		m_nAge = nage;
 	}
 
+	inline double getIncome() {
+		return m_dIncome;
+	}
 
+	inline void setIncome(double dval) {
+		m_dIncome = dval;
+	}
 };
 

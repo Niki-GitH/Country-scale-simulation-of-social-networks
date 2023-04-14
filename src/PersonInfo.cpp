@@ -34,7 +34,9 @@ CPersonInfo::CPersonInfo():
 	m_strEmail("aa.bb@xyz.com"),
 	m_strDateofDeath(""),
 	m_stFinancialStatus(FINANCE_STATUS_POOR),
-	m_nAge(5)
+	m_nAge(5),
+	m_dIncome(1000),
+	m_uniqueID("")
 {
 }
 
@@ -75,14 +77,16 @@ void CPersonInfo::UpdateGraduationDetatils(std::string GraduationType)
 	}
 }
 
-void CPersonInfo::UpdateFamilyDetatils(std::string childName)
+void CPersonInfo::UpdateFamilyDetatils(std::string childName, CPersonInfo& othrPrsn)
 {
 	m_listChildNames.push_back(childName);
+	m_vChildren.push_back(othrPrsn);
 }
 
-void CPersonInfo::UpdateMaritalDetatils(std::string spouseName)
+void CPersonInfo::UpdateMaritalDetatils(std::string spouseName, CPersonInfo& othrPrsn)
 {
 	m_strSpouseName = spouseName;
+	m_vSpouses.push_back(othrPrsn);
 }
 
 CPersonInfo::CPersonInfo(std::string FirstName, std::string Lastname, _dob stdob, GenderInfo_ gender, std::string Address)
@@ -96,6 +100,7 @@ CPersonInfo::CPersonInfo(std::string FirstName, std::string Lastname, _dob stdob
 {
    //std::cout<<"PINFO "<<m_strFirstName<<std::endl;
    //std::cout<<"PINFO "<<m_strLastName<<std::endl;
+	m_nAge = 2023 - stdob.m_nYear;
 }
 
 CPersonInfo::~CPersonInfo(void)
@@ -135,6 +140,18 @@ CPersonInfo::CPersonInfo(const CPersonInfo& copyObj)
 	m_stDeathDate = copyObj.m_stDeathDate;
 	m_stFinancialStatus = copyObj.m_stFinancialStatus;
 	m_nAge = copyObj.m_nAge;
+	m_uniqueID = copyObj.m_uniqueID;
+	m_dIncome = copyObj.m_dIncome;
+	m_schoolsattended = copyObj.m_schoolsattended;
+	m_vfriends = copyObj.m_vfriends;
+	m_vChildren = copyObj.m_vChildren;
+	m_vSpouses = copyObj.m_vSpouses;
+	m_vParents = copyObj.m_vParents;
+	m_vColleagues = copyObj.m_vColleagues;
+	m_vClassmates = copyObj.m_vClassmates;
+	m_vCommunity_members = copyObj.m_vCommunity_members;
+	m_vCommunication_contacts = copyObj.m_vCommunication_contacts;
+	m_vTransportation_contacts = copyObj.m_vTransportation_contacts;
 }
 
 CPersonInfo & CPersonInfo::operator=(const CPersonInfo & copyObj)
@@ -166,23 +183,25 @@ CPersonInfo & CPersonInfo::operator=(const CPersonInfo & copyObj)
 		m_stDeathDate = copyObj.m_stDeathDate;
 		m_stFinancialStatus = copyObj.m_stFinancialStatus;
 		m_nAge = copyObj.m_nAge;
+		m_uniqueID = copyObj.m_uniqueID;
+		m_dIncome = copyObj.m_dIncome;
+		m_schoolsattended = copyObj.m_schoolsattended;
+		m_vfriends = copyObj.m_vfriends;
+		m_vChildren = copyObj.m_vChildren;
+		m_vSpouses = copyObj.m_vSpouses;
+		m_vParents = copyObj.m_vParents;
+		m_vColleagues = copyObj.m_vColleagues;
+		m_vClassmates = copyObj.m_vClassmates;
+		m_vCommunity_members = copyObj.m_vCommunity_members;
+		m_vCommunication_contacts = copyObj.m_vCommunication_contacts;
+		m_vTransportation_contacts = copyObj.m_vTransportation_contacts;
 	}
 	return *this;
 }
 
-/*inline bool CPersonInfo::operator!=(const CPersonInfo & copyObj)
-{
-	bool bRet = false;
-	if ( (m_strFirstName != copyObj.m_strFirstName) && (m_nSSN != copyObj.m_nSSN))
-	{
-		bRet = true;
-	}
-	return bRet;
-}*/
 
 
-
-void CPersonInfo::AddEvent(const PersonEvent & newEvent)
+void CPersonInfo::AddEvent(const PersonEvent & newEvent, CPersonInfo& othrPrsn)
 {
 	PersonEvent ev = newEvent;
 	bool bupdate = true;
@@ -197,13 +216,13 @@ void CPersonInfo::AddEvent(const PersonEvent & newEvent)
 	case EVENT_TYPE_NEW_CHILD:
 	{
 		ev.m_strEventName = "Child";
-		UpdateFamilyDetatils(newEvent.m_strEventComments);
+		UpdateFamilyDetatils(newEvent.m_strEventComments, othrPrsn);
 	}
 	break;
 	case EVENT_TYPE_MARRIAGE:
 	{
 		ev.m_strEventName = "Marriage";
-		UpdateMaritalDetatils(newEvent.m_strEventComments);
+		UpdateMaritalDetatils(newEvent.m_strEventComments, othrPrsn);
 	}
 	break;
 	case EVENT_TYPE_NEW_JOB:

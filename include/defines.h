@@ -95,6 +95,22 @@ typedef enum enEMailProvider
 
 
 
+typedef enum enWorkAffiliation {
+	EDUCATION_SECTOR = 0,
+	MEDICAL_SECTOR,
+	PUBLIC_ADMINSTRATION,
+	CONSTRUCTION,
+	TRANSPORT,
+	AGRICULTURE,
+	FOOD_AND_HOSPITATLITY,
+	MANUFACTURING_MINING_ETC,
+	IORMATION_COMMUNICATION,
+	TRADE,
+	FINANCIAL_OPERATIONS_SERVICES,
+	PERSONAL_CULTURAL_SERVICES
+}WorkAffiliation;
+
+
 typedef enum enEdgeInfo
 {
 	EDGE_TYPE_PARTNER = 0,
@@ -190,6 +206,35 @@ struct _PopulationData
 			m_nArea = copyObj.m_nArea;
 			m_longitude = copyObj.m_longitude;
 			m_latitude = copyObj.m_latitude;
+		}
+		return *this;
+	}
+};
+
+struct Personality_traits
+{
+	double extraversion_score;
+	double agreeableness_score;
+	double conscientiousness_score;
+	double neuroticism_score;
+	double openness_score;
+
+	Personality_traits() :
+		extraversion_score(0.1),
+		agreeableness_score(0.1),
+		conscientiousness_score(0.1),
+		neuroticism_score(0.1),
+		openness_score(0.1)
+	{
+	}
+
+	inline Personality_traits& operator=(const Personality_traits& copyObj) {
+		if (&copyObj != this) {
+			extraversion_score = copyObj.extraversion_score;
+			agreeableness_score = copyObj.agreeableness_score;
+			conscientiousness_score = copyObj.conscientiousness_score;
+			neuroticism_score = copyObj.neuroticism_score;
+			openness_score = copyObj.openness_score;
 		}
 		return *this;
 	}

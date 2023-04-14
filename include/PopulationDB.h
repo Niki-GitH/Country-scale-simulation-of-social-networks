@@ -15,14 +15,18 @@ public:
 	std::set<std::string> m_countyNames;
 	static long		m_nTotalEvents;
 private:
-	const double	m_dAvgPercentageMale = 50.32; //From SCB Summary of Population Statistics 1960–2022
-	const double	m_dAvgPercentageFeMale = 49.68; //From SCB Summary of Population Statistics 1960–2022
-	const double	m_dAvgPercentageYoung = 21.8; //average young [0-17]From SCB Summary of Population Statistics 1960–2022
-	const double	m_dAvgPercentageElders = 17.9; //average  65 and above From SCB Summary of Population Statistics 1960–2022
-	const double	m_dCrudeDeathRate = 10.2; //average deaths per 1000 From SCB Summary of Population Statistics 1960–2022
-	const double	m_dInfantMortalityRate = 4.5; //average deaths per 1000 From SCB Summary of Population Statistics 1960–2022
-	const long		m_dAvgMarriages = 33.5; //% rate From SCB Population in Sweden 31 December 2022
-	const long		m_dAvgDivorces = 9.5; //% rate  From SCB Population in Sweden 31 December 2022
+	//const double	m_dAvgPercentageMale = 50.32; //From SCB Summary of Population Statistics 1960–2022
+	//const double	m_dAvgPercentageFeMale = 49.68; //From SCB Summary of Population Statistics 1960–2022
+	//const double	m_dAvgPercentageYoung = 21.8; //average young [0-17]From SCB Summary of Population Statistics 1960–2022
+	//const double	m_dAvgPercentageElders = 17.9; //average  65 and above From SCB Summary of Population Statistics 1960–2022
+	//const double	m_dCrudeDeathRate = 10.2; //average deaths per 1000 From SCB Summary of Population Statistics 1960–2022
+	//const double	m_dInfantMortalityRate = 4.5; //average deaths per 1000 From SCB Summary of Population Statistics 1960–2022
+	//const long		m_dAvgMarriages = 33.5; //% rate From SCB Population in Sweden 31 December 2022
+	//const long		m_dAvgDivorces = 9.5; //% rate  From SCB Population in Sweden 31 December 2022
+
+	long m_lTotalPopulationCnt;
+	long m_lBasePopulationCnt;
+	long m_lEvolvePopulationCnt;
 	std::vector< _PopulationData> m_populationDB;	
 	std::vector<CPersonInfo> m_lmalePopln;
 	std::vector<CPersonInfo> m_lfemalePopln;
@@ -41,10 +45,9 @@ public:
 	CPopulationDB();
 	~CPopulationDB();
 
-	void MakeRandomPopulationData(std::string country,std::string prefectr = "");
-
-	void MakePopulationData(std::string country,int gen, std::string prefectr = "");
-
+	///
+	void GenerateRandomPopulationData();
+	
 	//Writes generated population data to csv file
 	void WritePopulationDataToFile();
 	
@@ -55,8 +58,6 @@ public:
 	In     : count number of changes
 	return : void
 	*/	
-	void makeRandomEventMarriage(int count, int startIndexM, int startIndexF);
-
 	void makeRandomEventMarriage(CPersonInfo& parentM);
 
 	/*
@@ -89,7 +90,7 @@ public:
 	*/
 	void print_family_edges();
 
-	void Evolve(int years);
+	void Evolve(int years=10);
 
 	inline size_t GetPopCount() { return (m_lmalePopln.size()+m_lfemalePopln.size()+m_lChildPopln.size());}
 };
