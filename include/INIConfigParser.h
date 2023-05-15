@@ -5,9 +5,10 @@
 #include <fstream>
 #include <sstream>
 #include <regex>
-
+#include "defines.h"
 
 #define SECTION_POP "Population"
+#define SECTION_LOG "log"
 #define SECTION_GNDRD "GenderDistribution"
 #define SECTION_AD "AgeDistribution"
 #define SECTION_ED "EthnicityDistribution"
@@ -18,7 +19,9 @@
 #define SECTION_SCHOOLS "schools"
 #define SECTION_UNIS "universities"
 #define SECTION_OFFICES "Workplaces"
+#define SECTION_MARRIAGES "Marriages"
 
+#define KEY_LOG_FOLDER "output_folder"
 #define KEY_POP_COUNT "population_size"
 #define KEY_MIN_AGE "min_age"
 #define KEY_MAX_AGE "max_age"
@@ -37,6 +40,7 @@
 #define KEY_AGE_54 "age_25_54"
 #define KEY_AGE_64 "age_55_64"
 #define KEY_AGE_MAX "age_65_above"
+#define KEY_ED_NONE "no_info"
 #define KEY_ED_JUNIOR "primary_or_junior"
 #define KEY_ED_JUNIOR_HIGH "JUNIOR_HIGH"
 #define KEY_ED_SENIOR "SENIOR"
@@ -66,6 +70,9 @@
 #define KEY_NUM_OF_SCHOOLS "num_schools"
 #define KEY_NUM_OF_UNI "num_universities"
 #define KEY_NUM_OF_OFFICES "num_offices"
+
+#define KEY_AVG_MARRIAGE_RATE "average_marriage_rate"
+#define KEY_AVG_DIVORCE_RATE "average_divorece_rate"
 
 class CINIConfigParser
 {

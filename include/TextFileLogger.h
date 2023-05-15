@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstdarg>
 #include <string>
+#include <mutex>
 class CTextFileLogger
 {
 private:
@@ -19,7 +20,10 @@ private:
 
 	//keep track of file size
 	static std::size_t  m_lFileSizeInBytes;
-
+	
+	static std::mutex m_lock;
+	
+	static std::string m_sFolderName;
 
 public:
 	

@@ -51,13 +51,23 @@ CHMMEvents::CHMMEvents(std::vector<std::string> hidden_states, std::vector<int> 
 	};
 
 	//CHILD, YOUNG, WORKINGAGE,ELDER 
-	std::vector<std::vector<double>> emission_matrixage = {
+	/*std::vector<std::vector<double>> emission_matrixage = {
 	  {0.9, 0.6, 0.1, 0.0},
 	  {0.0, 0.0, 0.2, 0.0},
 	  {0.0, 0.0, 0.2, 0.05},
 	  {0.0, 0.0, 0.2, 0.2},
 	  {0.0, 0.3, 0.2, 0.005},
 	  {0.1, 0.1, 0.1, 0.7}
+	};*/
+	
+	//age_0_14,age_15_24,age_25_54,age_55_64,age_65_above
+	std::vector<std::vector<double>> emission_matrixage = {
+	  {0.9, 0.6,    0.1, 0.0,  0.0},
+	  {0.0, 0.0001, 0.2, 0.1,  0.0},
+	  {0.0, 0.05,   0.2, 0.05, 0.0005},
+	  {0.0, 0.1,    0.2, 0.4,  0.4},
+	  {0.0, 0.2499, 0.2, 0.005,0.0},
+	  {0.1, 0.1,    0.1, 0.445,  0.5995}
 	};
 
 	//"POOR", "LOWER_MIDDLE", "MIDDLE", "UPPER_MIDDLE", "RICH", "ULTRA_RICH"
@@ -94,22 +104,41 @@ CHMMEvents::CHMMEvents(std::vector<std::string> hidden_states, std::vector<int> 
 				double ageProb = 0.0;
 				if (age < 18)
 				{
-					ageProb = emission_matrixage[i][0];
+					if(age<15)
+					{
+						ageProb = emission_matrixage[0][i];
+					}
+					else
+					{
+						ageProb = emission_matrixage[1][i];
+					}
 				}
 				else if (age >= 18 && age < 26)
 				{
-					ageProb = emission_matrixage[i][1];
+					ageProb = emission_matrixage[2][i];
+					if(age<25)
+					{
+						ageProb = emission_matrixage[1][i];
+					}
 				}
-				else if (age > 25 && age <= 60)
+				else if (age > 25 && age <= 55)
 				{
-					ageProb = emission_matrixage[i][2];
+					ageProb = emission_matrixage[2][i];
+				}
+				else if (age > 55 && age <= 65)
+				{
+					ageProb = emission_matrixage[3][i];
 				}
 				else
 				{
-					ageProb = emission_matrixage[i][3];
+					ageProb = emission_matrixage[4][i];
 				}
 				double finaprob = emission_matrixFsts[i][j];
 				double obs_prob = ageProb * finaprob;
+				if((ageProb==0.0)||(finaprob==0.0))
+				{
+				obs_prob=ageProb+finaprob;
+				}
 				ep.probs[status + "_" + std::to_string(age)] = obs_prob;
 			}
 			j++;
@@ -145,6 +174,12 @@ CHMMEvents::CHMMEvents(std::vector<std::string> hidden_states, std::vector<int> 
 		init_probs_[hidden_states_[i]] = tmat1[0][i];
 	}*/
 }
+
+CHMMEvents::CHMMEvents(std::string modelname)
+{
+	readmodel(modelname);
+}
+
 
 std::vector<std::string> CHMMEvents::predict(std::vector<Observation>& observations) {
 	// Initialize the forward and backward probability matrices

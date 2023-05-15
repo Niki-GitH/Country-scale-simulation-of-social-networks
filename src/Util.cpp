@@ -2,6 +2,7 @@
 #include <algorithm>
 
 const std::string CUtil::WHITESPACE = " \n\r\t\f\v";
+std::atomic<int> CUtil::m_nTotalEvents{ 0 };
 
 CUtil::~CUtil(void)
 {

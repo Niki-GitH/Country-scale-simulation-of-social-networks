@@ -31,12 +31,12 @@ CPersonInfo::CPersonInfo():
 	m_strSpouseName(""),
 	m_strHomeAddress(""),
 	m_strWorkAddress(""),
-	m_strEmail("aa.bb@xyz.com"),
 	m_strDateofDeath(""),
 	m_stFinancialStatus(FINANCE_STATUS_POOR),
 	m_nAge(5),
 	m_dIncome(1000),
-	m_uniqueID("")
+	m_uniqueID(""),
+	m_nListIndex(0)
 {
 }
 
@@ -134,7 +134,6 @@ CPersonInfo::CPersonInfo(const CPersonInfo& copyObj)
 	m_strHomeAddress = copyObj.m_strHomeAddress;
 	m_strWorkAddress = copyObj.m_strWorkAddress;
 	m_listChildNames = copyObj.m_listChildNames;
-	m_strEmail = copyObj.m_strEmail;
 	m_listEvents = copyObj.m_listEvents;
 	m_strDateofDeath = copyObj.m_strDateofDeath;
 	m_stDeathDate = copyObj.m_stDeathDate;
@@ -142,6 +141,7 @@ CPersonInfo::CPersonInfo(const CPersonInfo& copyObj)
 	m_nAge = copyObj.m_nAge;
 	m_uniqueID = copyObj.m_uniqueID;
 	m_dIncome = copyObj.m_dIncome;
+	m_nListIndex = copyObj.m_nListIndex;
 	m_schoolsattended = copyObj.m_schoolsattended;
 	m_vfriends = copyObj.m_vfriends;
 	m_vChildren = copyObj.m_vChildren;
@@ -177,7 +177,6 @@ CPersonInfo & CPersonInfo::operator=(const CPersonInfo & copyObj)
 		m_strHomeAddress = copyObj.m_strHomeAddress;
 		m_strWorkAddress = copyObj.m_strWorkAddress;
 		m_listChildNames = copyObj.m_listChildNames;
-		m_strEmail = copyObj.m_strEmail;
 		m_listEvents = copyObj.m_listEvents;
 		m_strDateofDeath = copyObj.m_strDateofDeath;
 		m_stDeathDate = copyObj.m_stDeathDate;
@@ -185,6 +184,7 @@ CPersonInfo & CPersonInfo::operator=(const CPersonInfo & copyObj)
 		m_nAge = copyObj.m_nAge;
 		m_uniqueID = copyObj.m_uniqueID;
 		m_dIncome = copyObj.m_dIncome;
+		m_nListIndex = copyObj.m_nListIndex;
 		m_schoolsattended = copyObj.m_schoolsattended;
 		m_vfriends = copyObj.m_vfriends;
 		m_vChildren = copyObj.m_vChildren;
@@ -237,6 +237,11 @@ void CPersonInfo::AddEvent(const PersonEvent & newEvent, CPersonInfo& othrPrsn)
 		m_strDateofDeath = getDODstr();
 	}
 	break;
+	case EVENT_TYPE_HOME_PURCHASE:
+	{
+		m_strHomeAddress = ev.m_strEventComments;
+	}
+	break;
 	case EVENT_TYPE_START:
 	case EVENT_TYPE_END:
 	default:
@@ -250,9 +255,9 @@ void CPersonInfo::AddEvent(const PersonEvent & newEvent, CPersonInfo& othrPrsn)
 	}
 	
 	long temp = static_cast<long>(m_listEvents.size());
-	if (CPopulationDB::m_nTotalEvents < temp)
+	if (CUtil::m_nTotalEvents <= temp)
 	{
-		CPopulationDB::m_nTotalEvents = temp;
+		CUtil::m_nTotalEvents = temp;
 	}
 }
 
@@ -278,7 +283,7 @@ const std::string CPersonInfo::GetFormatedString()
 	}
 
 	std::string strFormtdInfo;
-	strFormtdInfo = strName +  dob + getGenderStr() + "," + m_strBirthPlace + "," + strParentName + ssn + m_strEmail + "," +m_strHomeAddress;
+	strFormtdInfo = strName +  dob + getGenderStr() + "," + m_strBirthPlace + "," + strParentName + ssn + m_strHomeAddress;
 	strFormtdInfo = strFormtdInfo + "," + getEducationStr() + "," + getMStsStr() + "," + m_strSpouseName + hasChild + NoOfChild;
 	strFormtdInfo = strFormtdInfo + childNames + IsEmpld + m_strWorkAddress + events;
 	return strFormtdInfo;

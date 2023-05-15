@@ -13,16 +13,8 @@ class CPopulationDB
 {
 public:
 	std::set<std::string> m_countyNames;
-	static long		m_nTotalEvents;
+	//static long		m_nTotalEvents;
 private:
-	//const double	m_dAvgPercentageMale = 50.32; //From SCB Summary of Population Statistics 1960–2022
-	//const double	m_dAvgPercentageFeMale = 49.68; //From SCB Summary of Population Statistics 1960–2022
-	//const double	m_dAvgPercentageYoung = 21.8; //average young [0-17]From SCB Summary of Population Statistics 1960–2022
-	//const double	m_dAvgPercentageElders = 17.9; //average  65 and above From SCB Summary of Population Statistics 1960–2022
-	//const double	m_dCrudeDeathRate = 10.2; //average deaths per 1000 From SCB Summary of Population Statistics 1960–2022
-	//const double	m_dInfantMortalityRate = 4.5; //average deaths per 1000 From SCB Summary of Population Statistics 1960–2022
-	//const long		m_dAvgMarriages = 33.5; //% rate From SCB Population in Sweden 31 December 2022
-	//const long		m_dAvgDivorces = 9.5; //% rate  From SCB Population in Sweden 31 December 2022
 
 	long m_lTotalPopulationCnt;
 	long m_lBasePopulationCnt;
@@ -39,12 +31,21 @@ private:
 	std::unique_ptr <CHMM_Career> m_csCareer;
 	std::unique_ptr <CHMMEvents> m_cslifeChoice;
 private:
+	CPopulationDB();
 	void ReadPopulationDBFile(std::string filepath);
 	void split(std::string str, char del, std::vector < std::string >& out);
+	//get index of male partner, returns true if found.
+	bool getRandomMaleForMarriage(int& retIndex);
+	//get index of female partner, returns true if found.
+	bool getRandomFemaleForMarriage(int& retIndex);
+	//get random male and female parent, return true if found
+	bool getRandomParent(int& retMale, int& retFemale);
 public:
-	CPopulationDB();
+	CPopulationDB(int popCount);
 	~CPopulationDB();
 
+
+	CPopulationDB& operator=(const CPopulationDB& copyObj);
 	///
 	void GenerateRandomPopulationData();
 	
@@ -58,7 +59,8 @@ public:
 	In     : count number of changes
 	return : void
 	*/	
-	void makeRandomEventMarriage(CPersonInfo& parentM);
+	void makeRandomEventMarriage(int ncount);
+	void makeRandomEventMarriage(CPersonInfo& partner);
 
 	/*
 	randomly choose male and female whose age is above 65 and make event death.
@@ -67,13 +69,14 @@ public:
 	*/
 	void makeRandomEventDeaths();
 
-	
+
 	/*
 	randomly choose person, check marital status.
 	If married add a new child or make child connection to existing person.
 	In     : count number of changes
 	return : void
-	*/	
+	*/
+	void assignChildtoRandomFamily(CPersonInfo& child);
 	void makeRandomEventChild(int count, CPersonInfo& parentM, CPersonInfo& parentF);
 
 	/*
@@ -90,9 +93,9 @@ public:
 	*/
 	void print_family_edges();
 
-	void Evolve(int years=10);
+	void Evolve();
 
 	inline size_t GetPopCount() { return (m_lmalePopln.size()+m_lfemalePopln.size()+m_lChildPopln.size());}
-};
 
+};
 

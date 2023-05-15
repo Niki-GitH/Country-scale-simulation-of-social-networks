@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <fstream>
 #include <cmath>
+#include <atomic>
 #include "defines.h"
 
 class CUtil
@@ -16,7 +17,9 @@ private:
 	virtual ~CUtil(void);
 
 	static const std::string WHITESPACE;
+	
 public:
+	static std::atomic<int> m_nTotalEvents;
 
 	static std::string ltrim(const std::string &s);
 

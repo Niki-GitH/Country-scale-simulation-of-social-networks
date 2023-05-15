@@ -33,8 +33,10 @@ std::pair<std::string, std::string> CPersonInfoGen::GenerateRandomName(GenderInf
 	std::pair<std::string, std::string> strname{ "AAAA","BBBB" };
 	do {
 		struct timespec ts;
-		//clock_gettime(CLOCK_MONOTONIC, &ts);
-		//srand((time_t)ts.tv_nsec);
+#if PLATFORM_TYPE_LINUX
+		clock_gettime(CLOCK_MONOTONIC, &ts);
+		srand((time_t)ts.tv_nsec);
+#endif
 		//srand ( time(NULL) );
 		int min = 0;
 		int max = m_vFirstNames_F.size() - 1;
@@ -85,8 +87,10 @@ _dob CPersonInfoGen::GenerateRandomDOB(int stYear, int endyear, int year, int mo
 	
 	if(0 == month)
 	{
+#if PLATFORM_TYPE_LINUX
 	  clock_gettime(CLOCK_MONOTONIC, &ts);
 	  srand((time_t)ts.tv_nsec);
+#endif
 	  dob.m_nMonth = min + rand() % ((max + 1) - min);
 	}
 	else
@@ -96,8 +100,10 @@ _dob CPersonInfoGen::GenerateRandomDOB(int stYear, int endyear, int year, int mo
 	
 	if(0 == day)
 	{
+#if PLATFORM_TYPE_LINUX
 	  clock_gettime(CLOCK_MONOTONIC, &ts);
 	  srand((time_t)ts.tv_nsec);
+#endif
 	  if(2 == dob.m_nMonth)
 	  {
   	    max = 28;
@@ -117,8 +123,10 @@ _dob CPersonInfoGen::GenerateRandomDOB(int stYear, int endyear, int year, int mo
 	{
 	  if( ((stYear>0) && (endyear>0)) && (endyear>stYear))
 	  {
-	    clock_gettime(CLOCK_MONOTONIC, &ts);
-	    srand((time_t)ts.tv_nsec);
+#if PLATFORM_TYPE_LINUX
+	  clock_gettime(CLOCK_MONOTONIC, &ts);
+	  srand((time_t)ts.tv_nsec);
+#endif
 	    min = stYear;
   	    max = endyear;
 	  }
@@ -148,8 +156,10 @@ std::string CPersonInfoGen::GenerateRandomSSN()
 	const int max = 9;
 	std::string tempstr;
 	for (int k = 1; k < maxdigit; ++k) {
+#if PLATFORM_TYPE_LINUX
 		clock_gettime(CLOCK_MONOTONIC, &ts);
 		srand((time_t)ts.tv_nsec);
+#endif
 		i = min + rand() % ((max + 1) - min);	
 		tempstr = std::to_string(i);
 		outSSN = outSSN + tempstr;
@@ -164,15 +174,19 @@ std::string CPersonInfoGen::GenerateRandomEmail(std::string Fname, std::string L
 	const int max = 25;
 	struct timespec ts;
 	std::string outEmail = "aaa.bbb@gmail.com";
+#if PLATFORM_TYPE_LINUX
 	clock_gettime(CLOCK_MONOTONIC, &ts);
 	srand((time_t)ts.tv_nsec);
+#endif
 	int rindx = min + rand() % ((max + 1) - min);
 	std::string tempstr = m_vLetters[rindx] + std::to_string(rindx+2);
 	const std::string emailPrvds[8] = { "Gmail.com","Outlook.com","ProtonMail.com","AOL.com","zohomail.com","icloud.com","yahoo.com","GMX.com" };
 	const int min1 = 0;
 	const int max1 = 7;
+#if PLATFORM_TYPE_LINUX
 	clock_gettime(CLOCK_MONOTONIC, &ts);
 	srand((time_t)ts.tv_nsec);
+#endif
 	int rindx1 = min1 + rand() % ((max1 + 1) - min1);
 	std::string temprvdr = emailPrvds[rindx1];
 	
@@ -188,8 +202,10 @@ std::string CPersonInfoGen::GenerateRandomAddress(long areainHector, double long
 	const double approx_lat_to_kilometer = 111;//each deg = 111 km
 	double dSqKmradius = areainHector / 100.0;
 	struct timespec ts;
+#if PLATFORM_TYPE_LINUX
 	clock_gettime(CLOCK_MONOTONIC, &ts);
 	srand((time_t)ts.tv_nsec);
+#endif
 
 	const double fMin = 0.0;
 	const double fMax = approx_lat_to_kilometer/ dSqKmradius;
@@ -210,8 +226,10 @@ std::string CPersonInfoGen::GenerateRandomAddress(long areainHector, double long
 Graduation_ CPersonInfoGen::GenerateRandomEducation()
 {
 	struct timespec ts;
-	//clock_gettime(CLOCK_MONOTONIC, &ts);
-	//srand((time_t)ts.tv_nsec);
+#if PLATFORM_TYPE_LINUX
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	srand((time_t)ts.tv_nsec);
+#endif
 	const int min = (int)GRAD_TYPE_NONE;
 	const int max = (int)GRAD_TYPE_DOCTORAL;
 	int i = min + rand() % ((max + 1) - min);
@@ -222,8 +240,10 @@ Graduation_ CPersonInfoGen::GenerateRandomEducation()
 MaritalSatus_ CPersonInfoGen::GenerateRandomMSts()
 {
 	struct timespec ts;
-	//clock_gettime(CLOCK_MONOTONIC, &ts);
-	//srand((time_t)ts.tv_nsec);
+#if PLATFORM_TYPE_LINUX
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	srand((time_t)ts.tv_nsec);
+#endif
 	const int min = (int)MARITAL_STATUS_SINGLE;
 	const int max = (int)MARITAL_STATUS_SEPERATED;
 	int i = min + rand() % ((max + 1) - min);

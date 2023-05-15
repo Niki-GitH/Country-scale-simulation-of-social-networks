@@ -14,9 +14,15 @@
 #define CHILD_DOB_ST	 2008
 #define CHILD_DOB_EN     2022
 
-long CPopulationDB::m_nTotalEvents = 0;
+//long CPopulationDB::m_nTotalEvents = 0;
 
 CPopulationDB::CPopulationDB()
+{
+
+	
+}
+
+CPopulationDB::CPopulationDB(int popCount)
 {
 	pInoGen = std::make_unique<CPersonInfoGen>();
 	ReadPopulationDBFile("./data/sweden_population_ref_scb_2020.csv");
@@ -52,7 +58,7 @@ CPopulationDB::CPopulationDB()
 	hstates.push_back("NEW_JOB");
 	hstates.push_back("DEATH");
 	std::vector<int> ages;
-	for (int i = 1; i < 90; ++i)
+	for (int i = 1; i < 100; ++i)
 	{
 		ages.push_back(i);
 	}
@@ -65,10 +71,12 @@ CPopulationDB::CPopulationDB()
 	fstatus.push_back("ULTRA_RICH");
 
 	m_cslifeChoice = std::make_unique <CHMMEvents>(hstates, ages, fstatus);
+	//m_cslifeChoice = std::make_unique <CHMMEvents>("./data/HMMEvents.model");
 
-	m_lTotalPopulationCnt = 0;
 	m_lBasePopulationCnt = 0;
 	m_lEvolvePopulationCnt = 0;
+	m_lTotalPopulationCnt = popCount;
+	//m_cslifeChoice->savemodel();
 }
 
 CPopulationDB::~CPopulationDB()
@@ -124,12 +132,48 @@ void CPopulationDB::ReadPopulationDBFile(std::string filepath)
 	}
 }
 
+CPopulationDB & CPopulationDB::operator=(const CPopulationDB & copyObj)
+{
+	if (&copyObj != this) {
+		m_countyNames = copyObj.m_countyNames;
+		m_populationDB = copyObj.m_populationDB;
+		for (auto x : copyObj.m_lmalePopln)
+		{
+			m_lmalePopln.push_back(x);
+		}
+		for (auto x : copyObj.m_lfemalePopln)
+		{
+			m_lfemalePopln.push_back(x);
+		}
+		for (auto x : copyObj.m_lChildPopln)
+		{
+			m_lChildPopln.push_back(x);
+		}
+		for (auto x : copyObj.m_marriages)
+		{
+			m_marriages.push_back(x);
+		}
+		for (auto x : copyObj.m_parentChild)
+		{
+			m_parentChild.push_back(x);
+		}
+		for (auto x : copyObj.m_edges)
+		{
+			m_edges.push_back(x);
+		}
+		for (auto x : copyObj.m_strEdges)
+		{
+			m_strEdges.push_back(x);
+		}
+	}
+	return *this;
+}
 
 void CPopulationDB::GenerateRandomPopulationData()
 {
 	struct timespec ts;
-	m_lTotalPopulationCnt = CINIConfigParser::GetIntValue(SECTION_POP,KEY_POP_COUNT,100);
-	m_lBasePopulationCnt = static_cast<long>(m_lTotalPopulationCnt * CINIConfigParser::GetDblValue(SECTION_POP, KEY_BASE_RATE, 0.5));
+	//m_lTotalPopulationCnt = CINIConfigParser::GetIntValue(SECTION_POP,KEY_POP_COUNT,100);
+	m_lBasePopulationCnt = m_lTotalPopulationCnt;//static_cast<long>(m_lTotalPopulationCnt * CINIConfigParser::GetDblValue(SECTION_POP, KEY_BASE_RATE, 0.5));
 	m_lEvolvePopulationCnt = m_lTotalPopulationCnt - m_lBasePopulationCnt;
 
 	long agedhildrn = static_cast<long>(m_lBasePopulationCnt * CINIConfigParser::GetDblValue(SECTION_AD, KEY_AGE_14));
@@ -141,10 +185,16 @@ void CPopulationDB::GenerateRandomPopulationData()
 	double dmalepercentage = CINIConfigParser::GetDblValue(SECTION_GNDRD, KEY_MALE);
 	double dfemalepercentage = CINIConfigParser::GetDblValue(SECTION_GNDRD, KEY_FEMALE);
 
+	long marriages = static_cast<long>(m_lBasePopulationCnt * CINIConfigParser::GetDblValue(SECTION_MARRIAGES, KEY_AVG_MARRIAGE_RATE));
+	const int maxage = CINIConfigParser::GetIntValue(SECTION_POP, KEY_MAX_AGE);
+	const int minage = CINIConfigParser::GetIntValue(SECTION_POP, KEY_MIN_AGE);
+
 	for (long ep = 0; ep < ageelder; ++ep)
 	{
+#if PLATFORM_TYPE_LINUX
 		clock_gettime(CLOCK_MONOTONIC, &ts);
 		srand((time_t)ts.tv_nsec);
+#endif
 		int randCity = 0 + rand() % ((m_populationDB.size()) - 0);
 		_PopulationData db;
 		if (randCity < m_populationDB.size())
@@ -162,15 +212,23 @@ void CPopulationDB::GenerateRandomPopulationData()
 		MaritalSatus_ msts = MARITAL_STATUS_SINGLE;
 		msts = pInoGen->GenerateRandomMSts();
 		std::string randAdd = pInoGen->GenerateRandomAddress(db.m_nArea, db.m_longitude, db.m_latitude);
-		randAdd = randAdd + db.m_strLocalityName + db.m_strSubPrefec + db.m_strPrefec + db.m_strCountry;
+		//randAdd = randAdd + db.m_strLocalityName + db.m_strSubPrefec + db.m_strPrefec + db.m_strCountry;
 		CPersonInfo pMInfo(fullname.first, fullname.second, stdob, ginfo, randAdd);
 		pMInfo.setSSN(pInoGen->GenerateRandomSSN());
-		pMInfo.setEmail(pInoGen->GenerateRandomEmail(pMInfo.getFirstName(), pMInfo.getLastName()));
 		pMInfo.setGraduation(grad);
 		pMInfo.setMaritalStatus(msts);
 		pMInfo.setHasChildren(false);
+		if (pMInfo.getAge() > maxage)
+		{
+			int year = pMInfo.getDOB_Year();
+			int diff = pMInfo.getAge() - maxage;
+			pMInfo.setAge(maxage);
+			stdob.m_nYear = year - diff;
+		}
+#if PLATFORM_TYPE_LINUX
 		clock_gettime(CLOCK_MONOTONIC, &ts);
 		srand((time_t)ts.tv_nsec);
+#endif
 		int randFSts = FINANCE_STATUS_POOR + rand() % ((FINANCE_STATUS_ULTRA_RICH + 1) - FINANCE_STATUS_POOR);
 		if (1 == randFSts)
 		{
@@ -205,18 +263,22 @@ void CPopulationDB::GenerateRandomPopulationData()
 
 		if (ginfo == GENDER_TYPE_MALE)
 		{
+			pMInfo.setListIndex(m_lmalePopln.size());
 			m_lmalePopln.push_back(pMInfo);
 		}
 		else
 		{
+			pMInfo.setListIndex(m_lfemalePopln.size());
 			m_lfemalePopln.push_back(pMInfo);
 		}
 	}
 
 	for (long cp = 0; cp < agedhildrn; ++cp)
 	{
+#if PLATFORM_TYPE_LINUX
 		clock_gettime(CLOCK_MONOTONIC, &ts);
 		srand((time_t)ts.tv_nsec);
+#endif
 		int randCity = 0 + rand() % ((m_populationDB.size()) - 0);
 		_PopulationData db;
 		if (randCity < m_populationDB.size())
@@ -239,7 +301,6 @@ void CPopulationDB::GenerateRandomPopulationData()
 		std::string randAdd = "";
 		CPersonInfo pMInfo(fullname.first, fullname.second, stdob, ginfo, randAdd);
 		pMInfo.setSSN(pInoGen->GenerateRandomSSN());
-		pMInfo.setEmail(pInoGen->GenerateRandomEmail(pMInfo.getFirstName(), pMInfo.getLastName()));
 		pMInfo.setGraduation(grad);
 		pMInfo.setMaritalStatus(MARITAL_STATUS_SINGLE);
 
@@ -250,8 +311,10 @@ void CPopulationDB::GenerateRandomPopulationData()
 
 	for (long yp = 0; yp < ageyng; ++yp)
 	{
+#if PLATFORM_TYPE_LINUX
 		clock_gettime(CLOCK_MONOTONIC, &ts);
 		srand((time_t)ts.tv_nsec);
+#endif
 		int randCity = 0 + rand() % ((m_populationDB.size()) - 0);
 		_PopulationData db;
 		if (randCity < m_populationDB.size())
@@ -263,22 +326,24 @@ void CPopulationDB::GenerateRandomPopulationData()
 		{
 			ginfo = GENDER_TYPE_FEMALE;
 		}
+#if PLATFORM_TYPE_LINUX
 		clock_gettime(CLOCK_MONOTONIC, &ts);
 		srand((time_t)ts.tv_nsec);
+#endif
 		int randFSts = FINANCE_STATUS_POOR + rand() % ((FINANCE_STATUS_ULTRA_RICH + 1) - FINANCE_STATUS_POOR);
 
 		std::pair<std::string, std::string> fullname = pInoGen->GenerateRandomName(ginfo);
 		_dob stdob = pInoGen->GenerateRandomDOB(CHILD_DOB_ST-11, CHILD_DOB_ST);
 		Graduation_ grad = GRAD_TYPE_NONE;
-
+#if PLATFORM_TYPE_LINUX
 		clock_gettime(CLOCK_MONOTONIC, &ts);
 		srand((time_t)ts.tv_nsec);
+#endif
 		grad = (Graduation_)( GRAD_TYPE_SENIOR_HIGH + rand() % ((GRAD_TYPE_BACHELOR + 1) - GRAD_TYPE_SENIOR_HIGH));
 
 		std::string randAdd = "";
 		CPersonInfo pMInfo(fullname.first, fullname.second, stdob, ginfo, randAdd);
 		pMInfo.setSSN(pInoGen->GenerateRandomSSN());
-		pMInfo.setEmail(pInoGen->GenerateRandomEmail(pMInfo.getFirstName(), pMInfo.getLastName()));
 		pMInfo.setGraduation(grad);
 		pMInfo.setMaritalStatus(MARITAL_STATUS_SINGLE);
 		pMInfo.setHasChildren(false);
@@ -320,10 +385,12 @@ void CPopulationDB::GenerateRandomPopulationData()
 		{
 			if (ginfo == GENDER_TYPE_MALE)
 			{
+				pMInfo.setListIndex(m_lmalePopln.size());
 				m_lmalePopln.push_back(pMInfo);
 			}
 			else
 			{
+				pMInfo.setListIndex(m_lfemalePopln.size());
 				m_lfemalePopln.push_back(pMInfo);
 			}
 		}
@@ -331,8 +398,10 @@ void CPopulationDB::GenerateRandomPopulationData()
 
 	for (long p = 0; p < ageworking; ++p)
 	{
+#if PLATFORM_TYPE_LINUX
 		clock_gettime(CLOCK_MONOTONIC, &ts);
 		srand((time_t)ts.tv_nsec);
+#endif
 		int randCity = 0 + rand() % ((m_populationDB.size()) - 0);
 		_PopulationData db;
 		if (randCity < m_populationDB.size())
@@ -344,8 +413,10 @@ void CPopulationDB::GenerateRandomPopulationData()
 		{
 			ginfo = GENDER_TYPE_FEMALE;
 		}
+#if PLATFORM_TYPE_LINUX
 		clock_gettime(CLOCK_MONOTONIC, &ts);
 		srand((time_t)ts.tv_nsec);
+#endif
 		int randFSts = FINANCE_STATUS_POOR + rand() % ((FINANCE_STATUS_ULTRA_RICH + 1) - FINANCE_STATUS_POOR);
 
 		std::pair<std::string, std::string> malename = pInoGen->GenerateRandomName(ginfo);
@@ -354,10 +425,9 @@ void CPopulationDB::GenerateRandomPopulationData()
 		MaritalSatus_ msts = MARITAL_STATUS_SINGLE;
 		msts = pInoGen->GenerateRandomMSts();
 		std::string randAdd = pInoGen->GenerateRandomAddress(db.m_nArea, db.m_longitude, db.m_latitude);
-		randAdd = randAdd + db.m_strLocalityName + db.m_strSubPrefec + db.m_strPrefec + db.m_strCountry;
+		//randAdd = randAdd + db.m_strLocalityName + db.m_strSubPrefec + db.m_strPrefec + db.m_strCountry;
 		CPersonInfo pMInfo(malename.first, malename.second, stdob, ginfo, randAdd);
 		pMInfo.setSSN(pInoGen->GenerateRandomSSN());
-		pMInfo.setEmail(pInoGen->GenerateRandomEmail(pMInfo.getFirstName(), pMInfo.getLastName()));
 		pMInfo.setGraduation(grad);
 		pMInfo.setMaritalStatus(msts);
 		pMInfo.setHasChildren(false);
@@ -394,32 +464,65 @@ void CPopulationDB::GenerateRandomPopulationData()
 		}
 		if (ginfo == GENDER_TYPE_MALE)
 		{
+			pMInfo.setListIndex(m_lmalePopln.size());
 			m_lmalePopln.push_back(pMInfo);
 		}
 		else
 		{
+			pMInfo.setListIndex(m_lfemalePopln.size());
 			m_lfemalePopln.push_back(pMInfo);
 		}
 	}//for
 
+	makeRandomEventMarriage(marriages);
+	for (auto child : m_lChildPopln)
+	{
+		assignChildtoRandomFamily(child);
+	}
 	std::cout << "GenerateRandomPopulationData() -> Generated 1st generation random data :" << GetPopCount() << std::endl;
-
+	CTextFileLogger::GetLogger()->Log("GenerateRandomPopulationData() -> Generated 1st generation random data : %d", GetPopCount());
 }
 
 
-void CPopulationDB::Evolve(int years)
+void CPopulationDB::Evolve()
 {
-//	std::cout << "Evolve population"<<std::endl;
-	for (int i = 0; i < years; ++i)
+	//	std::cout << "Evolve population"<<std::endl;
+	CTextFileLogger::GetLogger()->Log("Evolve() called...");
+	struct timespec ts;
+	for (int i = 0; i < 10; ++i)
 	{
-	CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d]",i);
-	//std::cout << "Evolve population"<<std::endl;
+		//CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d]", i);
+		//std::cout << "Evolve population"<<std::endl;
+		/*std::vector<CPersonInfo> tempChildrens;
+		for (auto child : m_lChildPopln)
+		{
+			int age = child.getAge() + 1;
+			child.setAge(age);
+			if (age >= 18)
+			{
+				if (GENDER_TYPE_MALE == child.getGender())
+				{
+					m_lmalePopln.push_back(child);
+				}
+				else
+				{
+					m_lfemalePopln.push_back(child);
+				}
+			}
+			else
+			{
+				tempChildrens.push_back(child);
+			}
+		}
+		m_lChildPopln.clear();
+		m_lChildPopln = tempChildrens;*/
+
 		int childCount = 0;
 		for (auto persn : m_lfemalePopln)
 		{
 			//CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d] name = %s",i,persn.getFullName().c_str());
 			int age = persn.getAge();
-			persn.setAge(age+1);
+			persn.setAge(age + 1);
 			std::vector<Observation> observations;
 			Observation ob;
 			ob.age = age;
@@ -432,81 +535,104 @@ void CPopulationDB::Evolve(int years)
 				PersonEvent pev;
 				if (ev == EVENT_TYPE_GRADUATION)
 				{
-					
 					pev.m_nEventType = EVENT_TYPE_GRADUATION;
 					pev.m_strEventComments = "SENIOR";
-					
 					if ((age > 15) && (age < 70))
 					{
-					  if(persn.getGraduation() == GRAD_TYPE_NONE)
-					  {
-					  pev.m_strEventComments ="SENIOR";
-					  }
-					  else if(persn.getGraduation() == GRAD_TYPE_SENIOR_HIGH)
-					  {
-					  pev.m_strEventComments ="DIPLOMA";
-					  }
-					  else if(persn.getGraduation() == GRAD_TYPE_DIPLOMA)
-					  {
-					  pev.m_strEventComments ="ADVANCED";
-					  }
-					  else if(persn.getGraduation() == GRAD_TYPE_ADVANCED_DIPLOMA)
-					  {
-					  pev.m_strEventComments ="BACHELOR";
-					  }
-					  else if(persn.getGraduation() == GRAD_TYPE_BACHELOR)
-					  {
-					  pev.m_strEventComments ="MASTER";
-					  }
-					  else if(persn.getGraduation() == GRAD_TYPE_MASTER)
-					  {
-					  pev.m_strEventComments ="DOCTORAL";
-					  }
-					  
+						if (persn.getGraduation() == GRAD_TYPE_NONE)
+						{
+							pev.m_strEventComments = "SENIOR";
+						}
+						else if (persn.getGraduation() == GRAD_TYPE_SENIOR_HIGH)
+						{
+							pev.m_strEventComments = "DIPLOMA";
+						}
+						else if (persn.getGraduation() == GRAD_TYPE_DIPLOMA)
+						{
+							pev.m_strEventComments = "ADVANCED";
+						}
+						else if (persn.getGraduation() == GRAD_TYPE_ADVANCED_DIPLOMA)
+						{
+							pev.m_strEventComments = "BACHELOR";
+						}
+						else if (persn.getGraduation() == GRAD_TYPE_BACHELOR)
+						{
+							pev.m_strEventComments = "MASTER";
+						}
+						else if (persn.getGraduation() == GRAD_TYPE_MASTER)
+						{
+							pev.m_strEventComments = "DOCTORAL";
+						}
 					}
 					persn.AddEvent(pev, persn);
-					CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][female population]: New event GRADUATION",i);
-					//m_csCareer
+					//CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][female population]: New event GRADUATION", i);
 				}
 				else if (ev == EVENT_TYPE_NEW_CHILD)
 				{
-				   CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][female population]: name = %s New event NEW_CHILD",i,persn.getFullName().c_str());
+#if PLATFORM_TYPE_LINUX
+					clock_gettime(CLOCK_MONOTONIC, &ts);
+					srand((time_t)ts.tv_nsec);
+#endif
+					int randgen = 0 + rand() % (EVENT_INFO_END);		
+					GenderInfo_ ginfo = GENDER_TYPE_MALE;
+					if (randgen > GENDER_TYPE_MALE)
+					{
+						ginfo = GENDER_TYPE_FEMALE;
+					}
+					std::pair<std::string, std::string> fullname = pInoGen->GenerateRandomName(ginfo);
+					_dob stdob = pInoGen->GenerateRandomDOB(ELDERLY_DOB_ST, ELDERLY_DOB_EN);
+					Graduation_ grad = GRAD_TYPE_NONE;
+					MaritalSatus_ msts = MARITAL_STATUS_SINGLE;
+					CPersonInfo pChild(fullname.first, fullname.second, stdob, ginfo, persn.getHomeAddress());
+					pChild.setLastName(persn.getSpouse().getLastName());
+					pChild.setFatherName(persn.getSpouseName());
+					pChild.setMotherName(persn.getFullName());
+					pChild.setSSN(pInoGen->GenerateRandomSSN());
+					pChild.setGraduation(grad);
+					pChild.setMaritalStatus(msts);
+					pChild.setHasChildren(false);
+					m_lChildPopln.push_back(pChild);
+					pev.m_nEventType = EVENT_TYPE_NEW_CHILD;
+					pev.m_strEventComments = "NEW CHILD";
+					persn.AddEvent(pev, pChild);
+					persn.getSpouse().AddEvent(pev, pChild);
+					m_parentChild.push_back(std::make_tuple(persn.getSpouse(), pChild));
+					m_parentChild.push_back(std::make_tuple(persn, pChild));
+					CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][female population]: name = %s New event NEW_CHILD", i, persn.getFullName().c_str());
 				}
 				else if (ev == EVENT_TYPE_MARRIAGE)
 				{
-					//std::cout << "New event MARRIAGE"<<std::endl;
 					makeRandomEventMarriage(persn);
-					CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][female population]: name = %s New event MARRIAGE",i,persn.getFullName().c_str());
+					//CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][female population]: name = %s New event MARRIAGE", i, persn.getFullName().c_str());
 				}
 				else if (ev == EVENT_TYPE_HOME_PURCHASE)
 				{
-					CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][female population]: name = %s New event HOME_PURCHASE",i,persn.getFullName().c_str());
+					//CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][female population]: name = %s New event HOME_PURCHASE", i, persn.getFullName().c_str());
 					pev.m_nEventType = EVENT_TYPE_HOME_PURCHASE;
 					pev.m_strEventComments = "New home address=***";
 					persn.AddEvent(pev, persn);
 				}
 				else if (ev == EVENT_TYPE_NEW_JOB)
 				{
-					CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][female population]: name = %s New event NEW_JOB",i,persn.getFullName().c_str());
+					//CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][female population]: name = %s New event NEW_JOB", i, persn.getFullName().c_str());
 					pev.m_nEventType = EVENT_TYPE_NEW_JOB;
 					struct timespec ts;
+#if PLATFORM_TYPE_LINUX
 					clock_gettime(CLOCK_MONOTONIC, &ts);
 					srand((time_t)ts.tv_nsec);
+#endif
 					int randFSts = 0 + rand() % ((CINIConfigParser::GetNumOfOffices()) - 0);
 					pev.m_strEventComments = CINIConfigParser::GetOfficeAddress(randFSts);
 					persn.AddEvent(pev, persn);
 				}
 			}
-			
-			
-		}
+		}//for female population
 
 		for (auto persn : m_lmalePopln)
 		{
 			AgeObsSymbol ageObs = CHILD;
-			
 			int age = persn.getAge();
-			persn.setAge(age+1);
+			persn.setAge(age + 1);
 			std::vector<Observation> observations;
 			Observation ob;
 			ob.age = age;
@@ -521,202 +647,393 @@ void CPopulationDB::Evolve(int years)
 				{
 					pev.m_nEventType = EVENT_TYPE_GRADUATION;
 					pev.m_strEventComments = "SENIOR";
-					
 					if ((age > 15) && (age < 70))
 					{
-					  if(persn.getGraduation() == GRAD_TYPE_NONE)
-					  {
-					  pev.m_strEventComments ="SENIOR";
-					  }
-					  else if(persn.getGraduation() == GRAD_TYPE_SENIOR_HIGH)
-					  {
-					  pev.m_strEventComments ="DIPLOMA";
-					  }
-					  else if(persn.getGraduation() == GRAD_TYPE_DIPLOMA)
-					  {
-					  pev.m_strEventComments ="ADVANCED";
-					  }
-					  else if(persn.getGraduation() == GRAD_TYPE_ADVANCED_DIPLOMA)
-					  {
-					  pev.m_strEventComments ="BACHELOR";
-					  }
-					  else if(persn.getGraduation() == GRAD_TYPE_BACHELOR)
-					  {
-					  pev.m_strEventComments ="MASTER";
-					  }
-					  else if(persn.getGraduation() == GRAD_TYPE_MASTER)
-					  {
-					  pev.m_strEventComments ="DOCTORAL";
-					  }
-					  
+						if (persn.getGraduation() == GRAD_TYPE_NONE)
+						{
+							pev.m_strEventComments = "SENIOR";
+						}
+						else if (persn.getGraduation() == GRAD_TYPE_SENIOR_HIGH)
+						{
+							pev.m_strEventComments = "DIPLOMA";
+						}
+						else if (persn.getGraduation() == GRAD_TYPE_DIPLOMA)
+						{
+							pev.m_strEventComments = "ADVANCED";
+						}
+						else if (persn.getGraduation() == GRAD_TYPE_ADVANCED_DIPLOMA)
+						{
+							pev.m_strEventComments = "BACHELOR";
+						}
+						else if (persn.getGraduation() == GRAD_TYPE_BACHELOR)
+						{
+							pev.m_strEventComments = "MASTER";
+						}
+						else if (persn.getGraduation() == GRAD_TYPE_MASTER)
+						{
+							pev.m_strEventComments = "DOCTORAL";
+						}
+
 					}
 					persn.AddEvent(pev, persn);
-					CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][Male population]: New event GRADUATION",i);
+					CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][Male population]: New event GRADUATION", i);
 				}
 				else if (ev == EVENT_TYPE_NEW_CHILD)
 				{
-					CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][Male population]: name = %s New event NEW_CHILD",i,persn.getFullName().c_str());
+
+#if PLATFORM_TYPE_LINUX
+					clock_gettime(CLOCK_MONOTONIC, &ts);
+					srand((time_t)ts.tv_nsec);
+#endif
+					int randgen = 0 + rand() % (EVENT_INFO_END);
+					GenderInfo_ ginfo = GENDER_TYPE_MALE;
+					if (randgen > GENDER_TYPE_MALE)
+					{
+						ginfo = GENDER_TYPE_FEMALE;
+					}
+					std::pair<std::string, std::string> fullname = pInoGen->GenerateRandomName(ginfo);
+					_dob stdob = pInoGen->GenerateRandomDOB(ELDERLY_DOB_ST, ELDERLY_DOB_EN);
+					Graduation_ grad = GRAD_TYPE_NONE;
+					MaritalSatus_ msts = MARITAL_STATUS_SINGLE;
+					CPersonInfo pChild(fullname.first, fullname.second, stdob, ginfo, persn.getHomeAddress());
+					pChild.setLastName(persn.getLastName());
+					pChild.setFatherName(persn.getFullName());
+					pChild.setMotherName(persn.getSpouseName());
+					pChild.setSSN(pInoGen->GenerateRandomSSN());
+					pChild.setGraduation(grad);
+					pChild.setMaritalStatus(msts);
+					pChild.setHasChildren(false);
+					m_lChildPopln.push_back(pChild);
+					pev.m_nEventType = EVENT_TYPE_NEW_CHILD;
+					pev.m_strEventComments = "NEW CHILD";
+					persn.AddEvent(pev, pChild);
+					persn.getSpouse().AddEvent(pev, pChild);
+					m_parentChild.push_back(std::make_tuple(persn, pChild));
+					m_parentChild.push_back(std::make_tuple(persn.getSpouse(), pChild));
+					CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][Male population]: name = %s New event NEW_CHILD", i, persn.getFullName().c_str());
 				}
 				else if (ev == EVENT_TYPE_MARRIAGE)
 				{
-					//std::cout << "New event MARRIAGE"<<std::endl;
 					makeRandomEventMarriage(persn);
-					CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][Male population]: name = %s New event MARRIAGE",i,persn.getFullName().c_str());
+					CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][Male population]: name = %s New event MARRIAGE", i, persn.getFullName().c_str());
 				}
 				else if (ev == EVENT_TYPE_HOME_PURCHASE)
 				{
-					CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][Male population]: name = %s New event HOME_PURCHASE",i,persn.getFullName().c_str());
+					CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][Male population]: name = %s New event HOME_PURCHASE", i, persn.getFullName().c_str());
 					pev.m_nEventType = EVENT_TYPE_HOME_PURCHASE;
 					pev.m_strEventComments = "New home address=***";
 					persn.AddEvent(pev, persn);
 				}
 				else if (ev == EVENT_TYPE_NEW_JOB)
 				{
-					CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][Male population]: name = %s New event NEW_JOB",i,persn.getFullName().c_str());
+					CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][Male population]: name = %s New event NEW_JOB", i, persn.getFullName().c_str());
 					pev.m_nEventType = EVENT_TYPE_NEW_JOB;
+#if PLATFORM_TYPE_LINUX
 					struct timespec ts;
 					clock_gettime(CLOCK_MONOTONIC, &ts);
 					srand((time_t)ts.tv_nsec);
+#endif
 					int randFSts = 0 + rand() % ((CINIConfigParser::GetNumOfOffices()) - 0);
 					pev.m_strEventComments = CINIConfigParser::GetOfficeAddress(randFSts);
 					persn.AddEvent(pev, persn);
 				}
 			}
+		}////for female population
+
+		/*
+		for (auto child : m_lChildPopln)
+		{
+			int age = child.getAge();
+			child.setAge(age + 1);
+			std::vector<Observation> observations;
+			Observation ob;
+			ob.age = age;
+			ob.financial_status = child.getFinancialSts_();
+			observations.push_back(ob);
+			std::vector<std::string> events = m_cslifeChoice->predict(observations);
+			for (auto evst : events)
+			{
+				EventType_ ev = CUtil::getLifeEventFromString(evst);
+				PersonEvent pev;
+				if (ev == EVENT_TYPE_GRADUATION)
+				{
+					pev.m_nEventType = EVENT_TYPE_GRADUATION;
+					pev.m_strEventComments = "SENIOR";
+					if ((age > 15) && (age < 70))
+					{
+						if (child.getGraduation() == GRAD_TYPE_NONE)
+						{
+							pev.m_strEventComments = "SENIOR";
+						}
+						else if (child.getGraduation() == GRAD_TYPE_SENIOR_HIGH)
+						{
+							pev.m_strEventComments = "DIPLOMA";
+						}
+						else if (child.getGraduation() == GRAD_TYPE_DIPLOMA)
+						{
+							pev.m_strEventComments = "ADVANCED";
+						}
+						else if (child.getGraduation() == GRAD_TYPE_ADVANCED_DIPLOMA)
+						{
+							pev.m_strEventComments = "BACHELOR";
+						}
+						else if (child.getGraduation() == GRAD_TYPE_BACHELOR)
+						{
+							pev.m_strEventComments = "MASTER";
+						}
+						else if (child.getGraduation() == GRAD_TYPE_MASTER)
+						{
+							pev.m_strEventComments = "DOCTORAL";
+						}
+					}
+					child.AddEvent(pev, child);
+					CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][female population]: New event GRADUATION", i);
+				}
+				else if (ev == EVENT_TYPE_NEW_JOB)
+				{
+					CTextFileLogger::GetLogger()->Log("Evolve() [Evolve year = %d][female population]: name = %s New event NEW_JOB", i, child.getFullName().c_str());
+					pev.m_nEventType = EVENT_TYPE_NEW_JOB;
+					struct timespec ts;
+#if PLATFORM_TYPE_LINUX
+					clock_gettime(CLOCK_MONOTONIC, &ts);
+					srand((time_t)ts.tv_nsec);
+#endif
+					int randFSts = 0 + rand() % ((CINIConfigParser::GetNumOfOffices()) - 0);
+					pev.m_strEventComments = CINIConfigParser::GetOfficeAddress(randFSts);
+					child.AddEvent(pev, child);
+				}
+			}
 		}
+		*/
 	}
 }
 
-
-void CPopulationDB::makeRandomEventMarriage(CPersonInfo & parentM)
+bool CPopulationDB::getRandomParent(int& retMale, int& retFemale)
 {
-
-	int nMin = 0;
-	int nMax = m_lmalePopln.size();
-	if (nMin >= nMax)
-	{
-		nMin = 0;
-	}
+	bool bRet = false;
+	const int nMin = 0;
+	const int nMax = m_lmalePopln.size();
+#if PLATFORM_TYPE_LINUX
 	struct timespec ts;
-	if (parentM.getGender() != GENDER_TYPE_MALE)
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	srand((time_t)ts.tv_nsec);
+#endif
+	int randNoM = nMin + rand() % ((nMax + 1) - nMin);
+	int randNoF = 0;
+	do
 	{
-		nMax = m_lfemalePopln.size();
-		clock_gettime(CLOCK_MONOTONIC, &ts);
-		srand((time_t)ts.tv_nsec);
-		int randNoF = nMin + rand() % ((nMax + 1) - nMin);
-		bool bFemaleFound = false;
-		if ((m_lfemalePopln[randNoF].getMaritalStatus() != MARITAL_STATUS_SINGLE) && (m_lfemalePopln[randNoF].getMaritalStatus() != MARITAL_STATUS_DIVORCED))
-		{
-			for (int f = randNoF + 1; f < nMax; ++f)
-			{
-				if (m_lfemalePopln[f].getMaritalStatus() == MARITAL_STATUS_SINGLE)
-				{
-					if (m_lfemalePopln[f].getDOB_Year() < (CHILD_DOB_ST - 4))
-					{
-						randNoF = f;
-						bFemaleFound = true;
-						break;
-					}
-				}
-			}
-			if (false == bFemaleFound)
-			{
-				for (int f = nMin; f < randNoF; ++f)
-				{
-					if (m_lfemalePopln[f].getMaritalStatus() == MARITAL_STATUS_SINGLE)
-					{
-						if (m_lfemalePopln[f].getDOB_Year() < (CHILD_DOB_ST - 4))
-						{
-							randNoF = f;
-							bFemaleFound = true;
-							break;
-						}
-					}
-				}
-				if (false == bFemaleFound)
-				{
-					return;
-				}
-			}
-		}
-
-		m_lfemalePopln[randNoF].setMaritalStatus(MARITAL_STATUS_MARRIED);
-		parentM.setMaritalStatus(MARITAL_STATUS_MARRIED);
-		std::string malePrtnr = parentM.getFirstName() + " " + parentM.getLastName();
-		std::string femalePrtnr = m_lfemalePopln[randNoF].getFirstName() + " " + m_lfemalePopln[randNoF].getLastName();
-		PersonEvent tempEv;
-		tempEv.m_nEventType = EVENT_TYPE_MARRIAGE;
-		tempEv.m_strLocation = m_lfemalePopln[randNoF].getHomeAddress();
-		tempEv.m_strEventComments = malePrtnr;
-		m_lfemalePopln[randNoF].AddEvent(tempEv, parentM);
-		tempEv.m_strEventComments = femalePrtnr;
-		parentM.AddEvent(tempEv, m_lfemalePopln[randNoF]);
-		m_lfemalePopln[randNoF].setHomeAddress(parentM.getHomeAddress());
-		//std::cout << " -> " << malePrtnr << " & " << femalePrtnr << std::endl;
-		m_marriages.push_back(std::make_tuple(parentM, m_lfemalePopln[randNoF]));
-
-	}
-	else
-	{
-		clock_gettime(CLOCK_MONOTONIC, &ts);
-		srand((time_t)ts.tv_nsec);
-		int randNoM = nMin + rand() % ((nMax + 1) - nMin);
-
-		bool bMaleFound = false;
-		if ((m_lmalePopln[randNoM].getMaritalStatus() != MARITAL_STATUS_SINGLE) && (m_lmalePopln[randNoM].getMaritalStatus() != MARITAL_STATUS_DIVORCED))
+		if ((m_lmalePopln[randNoM].getMaritalStatus() == MARITAL_STATUS_SINGLE) && (false == m_lmalePopln[randNoM].getHasChildren()))
 		{
 			for (int m = randNoM + 1; m < nMax; ++m)
 			{
-				if (m_lmalePopln[m].getMaritalStatus() == MARITAL_STATUS_SINGLE)
+				if (m_lmalePopln[m].getMaritalStatus() != MARITAL_STATUS_SINGLE)
 				{
-					if (m_lmalePopln[m].getDOB_Year() < (CHILD_DOB_ST - 4))
-					{
-						randNoM = m;
-						bMaleFound = true;
-						break;
-					}
+					randNoM = m;
+					bRet = true;
+					break;
 				}
 			}
-			if (false == bMaleFound)
+			if (false == bRet)
 			{
 				for (int m = nMin; m < randNoM; ++m)
 				{
 					if (m_lmalePopln[m].getMaritalStatus() == MARITAL_STATUS_SINGLE)
 					{
-						if (m_lmalePopln[m].getDOB_Year() < (CHILD_DOB_ST - 4))
-						{
-							randNoM = m;
-							bMaleFound = true;
-							break;
-						}
+						randNoM = m;
+						bRet = true;
+						break;
 					}
-				}
-				if (false == bMaleFound)
-				{
-					return;
 				}
 			}
 		}
 
-		parentM.setMaritalStatus(MARITAL_STATUS_MARRIED);
+		if (bRet == false)
+		{
+			break;
+		}
+
+		
+	} while (false);
+	if (bRet)
+	{
+		retMale = randNoM;
+		retFemale = m_lmalePopln[randNoM].getSpouse().getListIndex();
+	}
+	return bRet;
+}
+
+bool CPopulationDB::getRandomMaleForMarriage(int& retIndex)
+{
+	bool bRet = false;
+	const int nMin = 0;
+	const int nMax = m_lmalePopln.size();
+#if PLATFORM_TYPE_LINUX
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	srand((time_t)ts.tv_nsec);
+#endif
+	int randNoM = nMin + rand() % ((nMax + 1) - nMin);
+	do {	
+		if ((m_lmalePopln[randNoM].getMaritalStatus() == MARITAL_STATUS_MARRIED) || (m_lmalePopln[randNoM].getMaritalStatus() == MARITAL_STATUS_SEPERATED))
+		{
+			for (int m = randNoM + 1; m < nMax; ++m)
+			{
+				if (m_lmalePopln[m].getMaritalStatus() != MARITAL_STATUS_MARRIED)
+				{
+					if (m_lmalePopln[m].getDOB_Year() < (CHILD_DOB_ST - 4))
+					{
+						randNoM = m;
+						bRet = true;
+						break;
+					}
+				}
+			}
+			if (false == bRet)
+			{
+				for (int m = nMin; m < randNoM; ++m)
+				{
+					if (m_lmalePopln[m].getMaritalStatus() != MARITAL_STATUS_MARRIED)
+					{
+						if (m_lmalePopln[m].getDOB_Year() < (CHILD_DOB_ST - 4))
+						{
+							randNoM = m;
+							bRet = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+	} while (false);
+	retIndex = randNoM;
+	return bRet;
+}
+
+bool CPopulationDB::getRandomFemaleForMarriage(int& retIndex)
+{
+	bool bRet = false;
+	const int nMin = 0;
+	const int nMax = m_lfemalePopln.size();
+
+#if PLATFORM_TYPE_LINUX
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	srand((time_t)ts.tv_nsec);
+#endif
+	int randNoF = nMin + rand() % ((nMax + 1) - nMin);
+	do
+	{
+		if ((m_lfemalePopln[randNoF].getMaritalStatus() == MARITAL_STATUS_MARRIED) || (m_lfemalePopln[randNoF].getMaritalStatus() == MARITAL_STATUS_SEPERATED))
+		{
+			for (int f = randNoF + 1; f < nMax; ++f)
+			{
+				if (m_lfemalePopln[f].getMaritalStatus() != MARITAL_STATUS_MARRIED)
+				{
+					if (m_lfemalePopln[f].getDOB_Year() < (CHILD_DOB_ST - 4))
+					{
+						randNoF = f;
+						bRet = true;
+						break;
+					}
+				}
+			}
+			if (false == bRet)
+			{
+				for (int f = nMin; f < randNoF; ++f)
+				{
+					if (m_lfemalePopln[f].getMaritalStatus() != MARITAL_STATUS_MARRIED)
+					{
+						if (m_lfemalePopln[f].getDOB_Year() < (CHILD_DOB_ST - 4))
+						{
+							randNoF = f;
+							bRet = true;
+							break;
+						}
+					}
+				}
+			}
+		}//female
+	} while (false);
+	retIndex = randNoF;
+	return bRet;
+}
+
+void CPopulationDB::makeRandomEventMarriage(CPersonInfo & partner)
+{
+	if (partner.getGender() == GENDER_TYPE_MALE)
+	{
+		int index = 0;
+		if (getRandomFemaleForMarriage(index))
+		{
+			m_lfemalePopln[index].setMaritalStatus(MARITAL_STATUS_MARRIED);
+			partner.setMaritalStatus(MARITAL_STATUS_MARRIED);
+			std::string malePrtnr = partner.getFirstName() + " " + partner.getLastName();
+			std::string femalePrtnr = m_lfemalePopln[index].getFirstName() + " " + m_lfemalePopln[index].getLastName();
+			PersonEvent tempEv;
+			tempEv.m_nEventType = EVENT_TYPE_MARRIAGE;
+			tempEv.m_strLocation = m_lfemalePopln[index].getHomeAddress();
+			tempEv.m_strEventComments = malePrtnr;
+			m_lfemalePopln[index].AddEvent(tempEv, partner);
+			tempEv.m_strEventComments = femalePrtnr;
+			partner.AddEvent(tempEv, m_lfemalePopln[index]);
+			m_lfemalePopln[index].setHomeAddress(partner.getHomeAddress());
+			m_marriages.push_back(std::make_tuple(partner, m_lfemalePopln[index]));
+			CTextFileLogger::GetLogger()->Log("Marriage -> %s & %s", malePrtnr.c_str(), femalePrtnr.c_str());
+		}
+	}
+	else
+	{
+		int randNoM = 0;
+		if (getRandomMaleForMarriage(randNoM))
+		{
+			partner.setMaritalStatus(MARITAL_STATUS_MARRIED);
+			m_lmalePopln[randNoM].setMaritalStatus(MARITAL_STATUS_MARRIED);
+			std::string malePrtnr = m_lmalePopln[randNoM].getFirstName() + " " + m_lmalePopln[randNoM].getLastName();
+			std::string femalePrtnr = partner.getFirstName() + " " + partner.getLastName();
+			PersonEvent tempEv;
+			tempEv.m_nEventType = EVENT_TYPE_MARRIAGE;
+			tempEv.m_strLocation = partner.getHomeAddress();
+			tempEv.m_strEventComments = malePrtnr;
+			partner.AddEvent(tempEv, m_lmalePopln[randNoM]);
+			tempEv.m_strEventComments = femalePrtnr;
+			m_lmalePopln[randNoM].AddEvent(tempEv, partner);
+			partner.setHomeAddress(m_lmalePopln[randNoM].getHomeAddress());
+			m_marriages.push_back(std::make_tuple(m_lmalePopln[randNoM], partner));
+			CTextFileLogger::GetLogger()->Log("Marriage -> %s & %s", malePrtnr.c_str(), femalePrtnr.c_str());
+		}
+	}
+}
+
+void CPopulationDB::makeRandomEventMarriage(int ncount)
+{
+	for (int cnt = 0; cnt < ncount; cnt++)
+	{
+		bool bmalefound = false;
+		bool bfemalefound = false;
+		int randNoM = 0;
+		int randNoF = 0;
+		bmalefound = getRandomMaleForMarriage(randNoM);
+		bfemalefound = getRandomFemaleForMarriage(randNoF);
+
+		if ((false == bfemalefound) || (false == bmalefound))
+		{
+			break;
+		}
+		m_lfemalePopln[randNoF].setMaritalStatus(MARITAL_STATUS_MARRIED);
 		m_lmalePopln[randNoM].setMaritalStatus(MARITAL_STATUS_MARRIED);
 		std::string malePrtnr = m_lmalePopln[randNoM].getFirstName() + " " + m_lmalePopln[randNoM].getLastName();
-		std::string femalePrtnr = parentM.getFirstName() + " " + parentM.getLastName();
+		std::string femalePrtnr = m_lfemalePopln[randNoF].getFirstName() + " " + m_lfemalePopln[randNoF].getLastName();
 		PersonEvent tempEv;
 		tempEv.m_nEventType = EVENT_TYPE_MARRIAGE;
-		tempEv.m_strLocation = parentM.getHomeAddress();
+		tempEv.m_strLocation = m_lfemalePopln[randNoF].getHomeAddress();
 		tempEv.m_strEventComments = malePrtnr;
-		parentM.AddEvent(tempEv, m_lmalePopln[randNoM]);
+		m_lfemalePopln[randNoF].AddEvent(tempEv, m_lmalePopln[randNoM]);
 		tempEv.m_strEventComments = femalePrtnr;
-		m_lmalePopln[randNoM].AddEvent(tempEv, parentM);
-		parentM.setHomeAddress(m_lmalePopln[randNoM].getHomeAddress());
-		//std::cout << " -> " << malePrtnr << " & " << femalePrtnr << std::endl;
-
-		m_marriages.push_back(std::make_tuple(m_lmalePopln[randNoM], parentM));
-
-
-	}
-	
-
+		m_lmalePopln[randNoM].AddEvent(tempEv, m_lfemalePopln[randNoF]);
+		m_lfemalePopln[randNoF].setHomeAddress(m_lmalePopln[randNoM].getHomeAddress());
+		m_marriages.push_back(std::make_tuple(m_lmalePopln[randNoM], m_lfemalePopln[randNoF]));
+		CTextFileLogger::GetLogger()->Log("Marriage -> %s & %s", malePrtnr.c_str(), femalePrtnr.c_str());
+	}//for count
 }
 
 void CPopulationDB::makeRandomEventDeaths()
@@ -743,8 +1060,10 @@ void CPopulationDB::makeRandomEventDeaths()
 
 	for (int i = 0; i < totaldeathsadult/2; ++i)
 	{
+#if PLATFORM_TYPE_LINUX
 		clock_gettime(CLOCK_MONOTONIC, &ts);
 		srand((time_t)ts.tv_nsec);
+#endif
 		int randNoM = nMinM + rand() % ((nMax_M + 1) - nMinM);
 
 		bool bMaleFound = false;
@@ -787,9 +1106,10 @@ void CPopulationDB::makeRandomEventDeaths()
 		{
 			bMaleFound = true;
 		}
-
+#if PLATFORM_TYPE_LINUX
 		clock_gettime(CLOCK_MONOTONIC, &ts);
 		srand((time_t)ts.tv_nsec);
+#endif
 		int randNoF = nMinF + rand() % ((nMax_F + 1) - nMinF);
 		
 		if ((randNoF < 0) || (randNoF >= m_lfemalePopln.size()))
@@ -850,6 +1170,35 @@ void CPopulationDB::makeRandomEventDeaths()
 	}
 }
 
+void CPopulationDB::assignChildtoRandomFamily(CPersonInfo & child)
+{
+	int m = 0;
+	int f = 0;
+	if (getRandomParent(m, f))
+	{
+		std::string father = m_lmalePopln[m].getFirstName() + " " + m_lmalePopln[m].getLastName();
+		std::string mother = m_lfemalePopln[f].getFirstName() + " " + m_lfemalePopln[f].getLastName();
+		m_lmalePopln[m].setChildCount((int)m_lmalePopln[m].getChildCount() + 1);
+		m_lfemalePopln[f].setChildCount((int)m_lfemalePopln[f].getChildCount() + 1);
+		std::string childname = "";
+		child.setFatherName(father);
+		child.setMotherName(mother);
+		child.setLastName(m_lmalePopln[m].getLastName());
+		childname = child.getFirstName() + " " + child.getLastName();
+		child.setHomeAddress(m_lmalePopln[m].getHomeAddress());
+		PersonEvent ev;
+		ev.m_nEventType = EVENT_TYPE_NEW_CHILD;
+		ev.m_strDate = child.getDOBstr();
+		ev.m_strEventComments = childname;
+		m_lmalePopln[m].AddEvent(ev, child);
+		m_lfemalePopln[f].AddEvent(ev, child);
+		m_lmalePopln[m].setHasChildren(true);
+		m_lfemalePopln[f].setHasChildren(true);
+		m_parentChild.push_back(std::make_tuple(m_lmalePopln[m], child));
+		m_parentChild.push_back(std::make_tuple(m_lfemalePopln[f], child));
+		CTextFileLogger::GetLogger()->Log("EVENT_TYPE_NEW_CHILD -> Child[%s]. Parents : %s, %s", childname.c_str(), father.c_str(), mother.c_str());
+	}
+}
 
 void CPopulationDB::makeRandomEventChild(int count, CPersonInfo & parentM, CPersonInfo & parentF)
 {
@@ -860,8 +1209,10 @@ void CPopulationDB::makeRandomEventChild(int count, CPersonInfo & parentM, CPers
 		int nMinC = 0;
 		int nMaxC = m_lChildPopln.size();
 		struct timespec ts;
+#if PLATFORM_TYPE_LINUX
 		clock_gettime(CLOCK_MONOTONIC, &ts);
 		srand((time_t)ts.tv_nsec);
+#endif
 		int randNoM = nMinC + rand() % ((nMaxC + 1) - nMinC);
 
 		if ((randNoM < nMaxC) && (m_lChildPopln[randNoM].getFatherName() == ""))
@@ -1007,8 +1358,8 @@ void CPopulationDB::split(std::string str, char del, std::vector < std::string >
 void CPopulationDB::WritePopulationDataToFile()
 {
 	std::ofstream outFile("persons.csv");
-	outFile << "FName,Mname,Lname,DOB,Age,Gender,BirthPlace,FatherName,MotherName,SSN,Email,HomeAddress,EducationLevel,MaritalStatus,SpouseName,HasChildren,NumOfChild,ChildrenNames,IsEmployed,OfficeAddress";
-	for (int evs = 0; evs < m_nTotalEvents; ++evs)
+	outFile << "FName,Mname,Lname,DOB,Age,Gender,BirthPlace,FatherName,MotherName,SSN,HomeAddress,EducationLevel,MaritalStatus,SpouseName,HasChildren,NumOfChild,ChildrenNames,IsEmployed,OfficeAddress";
+	for (int evs = 0; evs < CUtil::m_nTotalEvents; ++evs)
 	{
 		std::string ev = std::to_string(evs + 1);
 		std::string evens = ", Event" + ev + ", Event" + ev + " Info";

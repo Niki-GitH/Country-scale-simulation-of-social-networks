@@ -6,18 +6,47 @@
 #include <vector>
 #include <stdlib.h> 
 #include <chrono>
+#include <iostream>
 #include "../include/TextFileLogger.h"
+#include "../include/INIConfigParser.h"
+
+
+#if PLATFORM_TYPE_LINUX
+#include <sys/stat.h>
+#else
+#include <filesystem>
+#endif
 
 const std::string CTextFileLogger::m_sFileName = "SimulatorLog.txt";
 CTextFileLogger* CTextFileLogger::m_pInstance = NULL;
 std::ofstream CTextFileLogger::m_Logfile;
 size_t  CTextFileLogger::m_lFileSizeInBytes = 0;
+std::mutex CTextFileLogger::m_lock;
+std::string CTextFileLogger::m_sFolderName= "";
 
-#define LOG_FILE_MAX_SIZE_BYTES 5120047  //5Mb
+#define LOG_FILE_MAX_SIZE_BYTES 10240094 //5120047  //5Mb
+
+
 
 CTextFileLogger* CTextFileLogger::GetLogger() {
 	if (m_pInstance == NULL) {
 		m_pInstance = new CTextFileLogger();
+		std::string fldr = CINIConfigParser::GetStringValue(SECTION_LOG, KEY_LOG_FOLDER);
+#if PLATFORM_TYPE_LINUX
+		/*if (mkdir(fldr.c_str(), 0777) == -1)
+		{
+			m_sFolderName = "";
+		}
+		else
+		{
+			m_sFolderName = fldr + "/";
+		}*/
+		
+#else
+		td::filesystem::create_directory(fldr);
+		m_sFolderName = fldr+ "/";
+#endif
+		std::string outfile = m_sFolderName + m_sFileName;
 		m_Logfile.open(m_sFileName.c_str(), std::ios::out | std::ios::app);
 	}
 	return m_pInstance;
@@ -25,6 +54,7 @@ CTextFileLogger* CTextFileLogger::GetLogger() {
 
 void CTextFileLogger::Log(const char * zcFormat, ...)
 {
+	m_lock.lock();
 	if (IsFileBig())
 	{
 		CloseCurrentAndCreateNewFile();
@@ -51,12 +81,12 @@ void CTextFileLogger::Log(const char * zcFormat, ...)
 	m_Logfile << datetime << ":  ";
 	m_Logfile << strMSg << "\n";
 	m_lFileSizeInBytes = m_lFileSizeInBytes + datetime.size() + strMSg.size() + 4;
-
-	
+	m_lock.unlock();	
 }
 
 void CTextFileLogger::Log(const std::string& sMessage)
 {
+	m_lock.lock();
 	if (IsFileBig())
 	{
 		CloseCurrentAndCreateNewFile();
@@ -66,10 +96,12 @@ void CTextFileLogger::Log(const std::string& sMessage)
 	m_Logfile << datetime << ":  ";
 	m_Logfile << sMessage << "\n";
 	m_lFileSizeInBytes = m_lFileSizeInBytes + datetime.size() + sMessage.size() + 4;
+	m_lock.unlock();
 }
 
 CTextFileLogger& CTextFileLogger::operator<<(const std::string& sMessage)
 {
+	m_lock.lock();
 	if (IsFileBig())
 	{
 		CloseCurrentAndCreateNewFile();
@@ -78,6 +110,7 @@ CTextFileLogger& CTextFileLogger::operator<<(const std::string& sMessage)
 	m_Logfile << "\n" << datetime << ":  ";
 	m_Logfile << sMessage << "\n";
 	m_lFileSizeInBytes = m_lFileSizeInBytes + datetime.size() + sMessage.size() + 4;
+	m_lock.unlock();
 	return *this;
 }
 
@@ -129,7 +162,11 @@ void CTextFileLogger::CloseCurrentAndCreateNewFile()
 	timeinfo = localtime(&rawtime);
 	strftime(buffer, sizeof(buffer), "%d-%m-%Y_%H-%M-%S", timeinfo);
 	std::string strtime(buffer);
+	//renameFile = m_sFolderName + renameFile + strtime + ".txt";
 	renameFile = renameFile + strtime + ".txt";
+	
+	
+	std::string outfile = m_sFolderName + m_sFileName;
 	
 	if (std::rename(m_sFileName.c_str(), renameFile.c_str()) != 0)
 	{
