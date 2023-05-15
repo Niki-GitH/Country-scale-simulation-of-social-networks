@@ -10,6 +10,7 @@ class CPersonInfo
 private:
 	//attributes
 	std::string			m_uniqueID;
+	int					m_nListIndex; //store the index for faster search
 	bool				m_bHasChildren;
 	bool				m_bIsEmployed;
 	std::int8_t			m_nDOB_Day;
@@ -20,7 +21,6 @@ private:
 	MaritalSatus_		m_nMaritalStatus;
 	Graduation_			m_nGraduation;
 	std::string			m_nSSN;
-	std::string			m_strEmail;
 	std::string			m_strFirstName;
 	std::string			m_strMiddleName;
 	std::string			m_strLastName;
@@ -91,7 +91,16 @@ public:
 		{
 		  bRet = true;
 		}
-	return bRet;
+		return bRet;
+	}
+
+	inline bool operator==(const CPersonInfo& copyObj) {
+		bool bRet = false;
+		if ((m_strFirstName == copyObj.m_strFirstName) && (m_nSSN == copyObj.m_nSSN))
+		{
+			bRet = true;
+		}
+		return bRet;
 	}
 
 	//add new event to person's life
@@ -175,14 +184,6 @@ public:
 
 	inline void setSSN(std::string m_nSSN_) {
 		m_nSSN = m_nSSN_;
-	}
-
-	inline std::string getEmail() {
-		return m_strEmail;
-	}
-
-	inline void setEmail(std::string m_strmail) {
-		m_strEmail = m_strmail;
 	}
 
 
@@ -340,6 +341,22 @@ public:
 
 	inline void setIncome(double dval) {
 		m_dIncome = dval;
+	}
+
+	CPersonInfo getSpouse()
+	{
+		if (m_vSpouses.size() == 0)
+		{
+			return *this;
+		}
+		return m_vSpouses[m_vSpouses.size() - 1];
+	}
+	inline int getListIndex() {
+		return m_nListIndex;
+	}
+
+	inline void setListIndex(int index) {
+		m_nListIndex = index;
 	}
 };
 

@@ -2,6 +2,18 @@
 #include <string>
 #include <vector>
 
+#if defined(_WIN32)
+#define PLATFORM_TYPE_LINUX 0 // Windows
+#elif defined(_WIN64)
+#define PLATFORM_TYPE_LINUX 0 // Windows
+#elif defined(__CYGWIN__) && !defined(_WIN32)
+#define PLATFORM_TYPE_LINUX 0 // Windows (Cygwin POSIX under Microsoft Window)
+#elif defined(__linux__)
+#define PLATFORM_TYPE_LINUX 1
+#else
+#define PLATFORM_TYPE_LINUX 0
+#endif
+
 typedef enum enEvent
 {
 	EVENT_TYPE_START = -1,

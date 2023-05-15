@@ -21,6 +21,8 @@ public:
 	// Constructor to initialize the CHMMEvents with the given parameters
 	CHMMEvents(std::vector<std::string> hidden_states, std::vector<int> age_range,
 		std::vector<std::string> financial_status);
+		
+	CHMMEvents(std::string modelname);
 
 	// Compute the most likely sequence of hidden states given the observations using the Viterbi algorithm
 	std::vector<std::string> predict(std::vector<Observation>& observations);
