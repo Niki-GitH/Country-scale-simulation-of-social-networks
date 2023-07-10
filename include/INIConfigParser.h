@@ -86,15 +86,51 @@ public:
 	static int GetNumOfUniversities() { return static_cast<int>(m_universities.size()); }
 	static int GetNumOfOffices() { return static_cast<int>(m_offices.size()); }
 
-	static std::string GetOfficeAddress(int index) 
+	static std::pair<std::string, std::string> GetOfficeAddress(int index)
 	{
 		if (index >= m_offices.size())
+		{
+			return std::make_pair("****","NA");
+		}
+		else
+		{
+			return m_offices[index];
+		}
+	}
+
+	static std::string GetSchoolAddress(int index)
+	{
+		if (index >= m_schools.size())
 		{
 			return "****";
 		}
 		else
 		{
-			return m_offices[index].second;
+			return m_schools[index].second;
+		}
+	}
+
+	static std::pair<std::string, std::string> GetSchoolNameNAddress(int index)
+	{
+		if (index >= m_schools.size())
+		{
+			return std::make_pair("****", "****");
+		}
+		else
+		{
+			return m_schools[index];
+		}
+	}
+
+	static std::pair<std::string, std::string> GetUnivstyNameNAddress(int index)
+	{
+		if (index >= m_universities.size())
+		{
+			return std::make_pair("****", "****");
+		}
+		else
+		{
+			return m_universities[index];
 		}
 	}
 

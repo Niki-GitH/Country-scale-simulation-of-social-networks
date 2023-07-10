@@ -10,7 +10,6 @@ class CPersonInfo
 private:
 	//attributes
 	std::string			m_uniqueID;
-	int					m_nListIndex; //store the index for faster search
 	bool				m_bHasChildren;
 	bool				m_bIsEmployed;
 	std::int8_t			m_nDOB_Day;
@@ -24,7 +23,6 @@ private:
 	std::string			m_strFirstName;
 	std::string			m_strMiddleName;
 	std::string			m_strLastName;
-	std::string			m_strBirthPlace;
 	std::string			m_strFatherName;
 	std::string			m_strMotherName;
 	std::string			m_strSpouseName;
@@ -32,23 +30,28 @@ private:
 	std::string			m_strWorkAddress;
 	std::vector<std::string> m_listChildNames;
 	std::vector<PersonEvent> m_listEvents;
-	std::string				m_strDateofDeath;
+	std::string			m_strDateofDeath;
 	_dob				m_stDeathDate;
 	FinancialSatus_		m_stFinancialStatus;
 	int 				m_nAge;
 	double				m_dIncome;
 	std::vector < std::pair<std::string, std::string>> m_schoolsattended;
 	std::vector < std::pair<std::string, std::string>> m_OfficePlaces;
-	std::vector<CPersonInfo> m_vfriends;
-	std::vector<CPersonInfo> m_vChildren;
-	std::vector<CPersonInfo> m_vSpouses;
-	std::vector<CPersonInfo> m_vParents;
-	std::vector<CPersonInfo> m_vColleagues;
-	std::vector<CPersonInfo> m_vClassmates;
-	std::vector<CPersonInfo> m_vCommunity_members;
-	std::vector<CPersonInfo> m_vCommunication_contacts;
-	std::vector<CPersonInfo> m_vTransportation_contacts;
-
+	//childerns tuple format: mature[>18], gendertype true=male, index of respective list
+	std::vector<std::tuple<bool,bool, long>> m_vChildren;
+	std::vector<long> m_vSpouses;
+	//std::vector<CPersonInfo> m_vParents;
+	//std::vector<CPersonInfo> m_vColleagues;
+	//std::vector<CPersonInfo> m_vClassmates;
+	//std::vector<CPersonInfo> m_vCommunity_members;
+	//std::vector<CPersonInfo> m_vCommunication_contacts;
+	//std::vector<CPersonInfo> m_vTransportation_contacts;
+				
+public:
+	unsigned short		m_nGeneration;
+	size_t				m_nListIndex; //store the index for faster search;
+	long				m_nListFatherIndex; //store the index of one parent for faster search;
+	long				m_nListMotherIndex; //store the index of one parent for faster search;
 private:
 	//Constructor
 	CPersonInfo();
@@ -85,6 +88,7 @@ public:
 	//Operator = overload
 	CPersonInfo& operator=(const CPersonInfo& copyObj);
 
+	//comparision operator overload
 	inline bool operator!=(const CPersonInfo& copyObj){
 		bool bRet = false;
 		if ( (m_strFirstName != copyObj.m_strFirstName) && (m_nSSN != copyObj.m_nSSN))
@@ -94,6 +98,7 @@ public:
 		return bRet;
 	}
 
+	//comparision operator overload
 	inline bool operator==(const CPersonInfo& copyObj) {
 		bool bRet = false;
 		if ((m_strFirstName == copyObj.m_strFirstName) && (m_nSSN == copyObj.m_nSSN))
@@ -184,11 +189,13 @@ public:
 
 	inline void setSSN(std::string m_nSSN_) {
 		m_nSSN = m_nSSN_;
+		m_uniqueID = m_nSSN + m_strFirstName;
 	}
 
 
 	inline int getChildCount() {
-		return m_nChildCount;
+		//return m_nChildCount;
+		return static_cast<int>(m_vChildren.size());
 	}
 
 	inline void setChildCount(int m_nChildCount_) {
@@ -247,13 +254,6 @@ public:
 		return (m_strFirstName + " " + m_strMiddleName + " " + m_strLastName);
 	}
 
-	inline std::string getBirthPlace() {
-		return m_strBirthPlace;
-	}
-
-	inline void setBirthPlace(std::string m_strBirthPlace_) {
-		m_strBirthPlace = m_strBirthPlace_;
-	}
 
 	inline std::string getFatherName() {
 		return m_strFatherName;
@@ -294,6 +294,30 @@ public:
 	
 	inline void setFinancialSts(FinancialSatus_ stVal_) {
 		m_stFinancialStatus = stVal_;
+		if (FINANCE_STATUS_LOWER_MIDDLE == stVal_)
+		{
+			m_dIncome = 244000.0;
+		}
+		else if (FINANCE_STATUS_MIDDLE == stVal_)
+		{
+			m_dIncome = 290000.0;
+		}
+		else if (FINANCE_STATUS_UPPER_MIDDLE == stVal_)
+		{
+			m_dIncome = 344000.0;
+		}
+		else if (FINANCE_STATUS_RICH == stVal_)
+		{
+			m_dIncome = 1004000.0;
+		}
+		else if (FINANCE_STATUS_ULTRA_RICH == stVal_)
+		{
+			m_dIncome = 5004000.0;
+		}
+		else
+		{
+			m_dIncome = 144000.0;
+		}
 	}
 
 	inline FinancialSatus_ getFinancialSts() {
@@ -343,20 +367,63 @@ public:
 		m_dIncome = dval;
 	}
 
-	CPersonInfo getSpouse()
+	size_t getSpouseIndex()
 	{
 		if (m_vSpouses.size() == 0)
 		{
-			return *this;
+			return -1;
 		}
 		return m_vSpouses[m_vSpouses.size() - 1];
 	}
-	inline int getListIndex() {
+
+	int getNumberofMarriages()
+	{
+		return static_cast<int>(m_vSpouses.size());
+	}
+
+	void addSpouse(long spouseIndex)
+	{
+		m_vSpouses.push_back(spouseIndex);
+	}
+
+	void addChild(CPersonInfo& child,long index)
+	{
+		bool bmature = (child.getAge() > 18) ? true : false;
+		bool bGender = (child.getGender() == GENDER_TYPE_MALE) ? true : false;
+		m_vChildren.push_back(std::make_tuple(bmature, bGender, index));
+		m_listChildNames.push_back(child.getFullName());
+	}
+
+	inline size_t getListIndex() {
 		return m_nListIndex;
 	}
 
-	inline void setListIndex(int index) {
+	inline void setListIndex(size_t index) {
 		m_nListIndex = index;
 	}
+
+	inline void setSchoolName(std::string schoolName, std::string address) {
+		m_schoolsattended.push_back(std::make_pair(schoolName, address));
+	}
+
+	inline void setSchoolName(std::pair<std::string, std::string> schoolNaddress) {
+		m_schoolsattended.push_back(schoolNaddress);
+	}
+	
+	inline void setOfficeName(std::string officeName, std::string address) {
+		m_OfficePlaces.push_back(std::make_pair(officeName, address));
+		m_strWorkAddress = address;
+	}
+
+	inline void setOfficeName(std::pair<std::string, std::string> officeNaddress) {
+		m_OfficePlaces.push_back(officeNaddress);
+		m_strWorkAddress = officeNaddress.second;
+	}
+
+	auto children_begin() { return m_vChildren.begin(); }
+	auto children_end() { return m_vChildren.end(); }
+
+	auto spouse_begin() { return m_vSpouses.begin(); }
+	auto spouse_end() { return m_vSpouses.end(); }
 };
 

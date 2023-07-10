@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <utility>
+#include <chrono>
 
 class CPersonInfoGen
 {
@@ -12,6 +13,8 @@ private:
 	std::vector<std::string> m_vFirstNames_F; //Female first names
 	std::vector<std::string> m_vFirstNames_M; //Male first names
 	std::vector<std::string> m_vLastName; //last names
+	mutable long lastRandomNumber = -1;
+	mutable std::chrono::system_clock::time_point lastTimestamp = std::chrono::system_clock::now();
 	const std::string m_vLetters[26] = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",
 		"o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
 	/*61.01688588478779, 12.253077071404247
@@ -49,6 +52,7 @@ private:
 	void ReadFirstNamesDBF(std::string filepath);
 	void ReadFirstNamesDBM(std::string filepath);
 	void ReadLastNamesDB(std::string filepath);
+	long generateRandomNumber(long min, long max) const;
 public:
 	CPersonInfoGen();
 	~CPersonInfoGen();
