@@ -1,9 +1,0 @@
-2023-06-29 20:41:03.976:  ************ Start application ************
-2023-06-29 20:41:04.026:  makeRandomEventMarriage -> Total created = 147, Needed = 167
-2023-06-29 20:41:04.046:  GenerateRandomPopulationData() -> Generated 1st generation random data : 498
-2023-06-29 20:41:04.046:  ********** Start writing data to csv
-2023-06-29 20:41:04.047:  ********** writing data to file complete
-2023-06-29 20:41:04.047:  generate_family_tree()  -> start
-2023-06-29 20:41:04.052:  generate_family_tree()  -> end
-2023-06-29 20:41:04.052:  ********** generating family tree complete
-2023-06-29 20:41:04.052:  Generation complete. Generated population size -> 498
