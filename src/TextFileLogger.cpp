@@ -54,6 +54,7 @@ CTextFileLogger* CTextFileLogger::GetLogger() {
 
 void CTextFileLogger::Log(const char * zcFormat, ...)
 {
+//return;
 	m_lock.lock();
 	if (IsFileBig())
 	{
@@ -86,6 +87,7 @@ void CTextFileLogger::Log(const char * zcFormat, ...)
 
 void CTextFileLogger::Log(const std::string& sMessage)
 {
+//return;
 	m_lock.lock();
 	if (IsFileBig())
 	{

@@ -77,7 +77,7 @@ void CINIConfigParser::parse(const std::string & fileName)
 			}
 		}
 	}
-
+	file.close();
 }
 
 long CINIConfigParser::GetIntValue(const std::string & section, const std::string & key, long defaultValue)

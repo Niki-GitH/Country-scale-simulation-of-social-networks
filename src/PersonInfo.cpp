@@ -20,23 +20,25 @@ CPersonInfo::CPersonInfo():
 	m_nSSN("111111111"),
 	m_nChildCount(0),
 	m_nGender(GENDER_TYPE_FEMALE),
-	m_nMaritalStatus(MARITAL_STATUS_SINGLE),
+	m_nMaritalStatus(MARITAL_STATUS_NEVER_MARRIED),
 	m_nGraduation(GRAD_TYPE_NONE),
 	m_strFirstName(""),
 	m_strMiddleName(""),
 	m_strLastName(""),
-	m_strBirthPlace(""),
 	m_strFatherName(""),
 	m_strMotherName(""),
 	m_strSpouseName(""),
 	m_strHomeAddress(""),
-	m_strWorkAddress(""),
+	m_strWorkAddress("Not Employed"),
 	m_strDateofDeath(""),
 	m_stFinancialStatus(FINANCE_STATUS_POOR),
 	m_nAge(5),
 	m_dIncome(1000),
 	m_uniqueID(""),
-	m_nListIndex(0)
+	m_nListIndex(0),
+	m_nGeneration(1),
+	m_nListFatherIndex(-1),
+	m_nListMotherIndex(-1)
 {
 }
 
@@ -80,13 +82,15 @@ void CPersonInfo::UpdateGraduationDetatils(std::string GraduationType)
 void CPersonInfo::UpdateFamilyDetatils(std::string childName, CPersonInfo& othrPrsn)
 {
 	m_listChildNames.push_back(childName);
-	m_vChildren.push_back(othrPrsn);
+	bool bmature = (othrPrsn.getAge() > 18) ? true : false;
+	bool bGender = (othrPrsn.getGender() == GENDER_TYPE_MALE) ? true : false;
+	m_vChildren.push_back(std::make_tuple(bmature, bGender, othrPrsn.m_nListIndex));
 }
 
 void CPersonInfo::UpdateMaritalDetatils(std::string spouseName, CPersonInfo& othrPrsn)
 {
 	m_strSpouseName = spouseName;
-	m_vSpouses.push_back(othrPrsn);
+	m_vSpouses.push_back(othrPrsn.m_nListIndex);
 }
 
 CPersonInfo::CPersonInfo(std::string FirstName, std::string Lastname, _dob stdob, GenderInfo_ gender, std::string Address)
@@ -127,7 +131,6 @@ CPersonInfo::CPersonInfo(const CPersonInfo& copyObj)
 	m_strFirstName = copyObj.m_strFirstName;
 	m_strMiddleName = copyObj.m_strMiddleName;
 	m_strLastName = copyObj.m_strLastName;
-	m_strBirthPlace = copyObj.m_strBirthPlace;
 	m_strFatherName = copyObj.m_strFatherName;
 	m_strMotherName = copyObj.m_strMotherName;
 	m_strSpouseName = copyObj.m_strSpouseName;
@@ -143,15 +146,11 @@ CPersonInfo::CPersonInfo(const CPersonInfo& copyObj)
 	m_dIncome = copyObj.m_dIncome;
 	m_nListIndex = copyObj.m_nListIndex;
 	m_schoolsattended = copyObj.m_schoolsattended;
-	m_vfriends = copyObj.m_vfriends;
 	m_vChildren = copyObj.m_vChildren;
 	m_vSpouses = copyObj.m_vSpouses;
-	m_vParents = copyObj.m_vParents;
-	m_vColleagues = copyObj.m_vColleagues;
-	m_vClassmates = copyObj.m_vClassmates;
-	m_vCommunity_members = copyObj.m_vCommunity_members;
-	m_vCommunication_contacts = copyObj.m_vCommunication_contacts;
-	m_vTransportation_contacts = copyObj.m_vTransportation_contacts;
+	m_nGeneration = copyObj.m_nGeneration;
+	m_nListFatherIndex = copyObj.m_nListFatherIndex;
+	m_nListMotherIndex = copyObj.m_nListMotherIndex;
 }
 
 CPersonInfo & CPersonInfo::operator=(const CPersonInfo & copyObj)
@@ -170,7 +169,6 @@ CPersonInfo & CPersonInfo::operator=(const CPersonInfo & copyObj)
 		m_strFirstName = copyObj.m_strFirstName;
 		m_strMiddleName = copyObj.m_strMiddleName;
 		m_strLastName = copyObj.m_strLastName;
-		m_strBirthPlace = copyObj.m_strBirthPlace;
 		m_strFatherName = copyObj.m_strFatherName;
 		m_strMotherName = copyObj.m_strMotherName;
 		m_strSpouseName = copyObj.m_strSpouseName;
@@ -186,15 +184,11 @@ CPersonInfo & CPersonInfo::operator=(const CPersonInfo & copyObj)
 		m_dIncome = copyObj.m_dIncome;
 		m_nListIndex = copyObj.m_nListIndex;
 		m_schoolsattended = copyObj.m_schoolsattended;
-		m_vfriends = copyObj.m_vfriends;
 		m_vChildren = copyObj.m_vChildren;
 		m_vSpouses = copyObj.m_vSpouses;
-		m_vParents = copyObj.m_vParents;
-		m_vColleagues = copyObj.m_vColleagues;
-		m_vClassmates = copyObj.m_vClassmates;
-		m_vCommunity_members = copyObj.m_vCommunity_members;
-		m_vCommunication_contacts = copyObj.m_vCommunication_contacts;
-		m_vTransportation_contacts = copyObj.m_vTransportation_contacts;
+		m_nGeneration = copyObj.m_nGeneration;
+		m_nListFatherIndex = copyObj.m_nListFatherIndex;
+		m_nListMotherIndex = copyObj.m_nListMotherIndex;
 	}
 	return *this;
 }
@@ -216,6 +210,7 @@ void CPersonInfo::AddEvent(const PersonEvent & newEvent, CPersonInfo& othrPrsn)
 	case EVENT_TYPE_NEW_CHILD:
 	{
 		ev.m_strEventName = "Child";
+		m_bHasChildren = true;
 		UpdateFamilyDetatils(newEvent.m_strEventComments, othrPrsn);
 	}
 	break;
@@ -228,6 +223,7 @@ void CPersonInfo::AddEvent(const PersonEvent & newEvent, CPersonInfo& othrPrsn)
 	case EVENT_TYPE_NEW_JOB:
 	{
 		ev.m_strEventName = "JobChange";
+		m_bIsEmployed = true;
 		m_strWorkAddress = newEvent.m_strEventComments;
 	}
 	break;
@@ -254,7 +250,7 @@ void CPersonInfo::AddEvent(const PersonEvent & newEvent, CPersonInfo& othrPrsn)
 		m_listEvents.push_back(ev);
 	}
 	
-	long temp = static_cast<long>(m_listEvents.size());
+	int temp = static_cast<int>(m_listEvents.size());
 	if (CUtil::m_nTotalEvents <= temp)
 	{
 		CUtil::m_nTotalEvents = temp;
@@ -263,29 +259,67 @@ void CPersonInfo::AddEvent(const PersonEvent & newEvent, CPersonInfo& othrPrsn)
 
 const std::string CPersonInfo::GetFormatedString()
 {
-	//FName,Mname,Lname,DOB,Gender,BirthPlace,FatherName,MotherName,SSN,Email,HomeAddress,EducationLevel,MaritalStatus,SpouseName,HasChildren,NumOfChild,ChildrenNames,IsEmployed,OfficeAddress
-	std::string strName = m_strFirstName + "," + m_strMiddleName + "," + m_strLastName;
+	//UniqueID,FName,Lname,DOB,Age,Gender,FatherName,MotherName,SSN,Email,HomeAddress,EducationLevel,MaritalStatus,SpouseName,HasChildren,NumOfChild,ChildrenNames,IsEmployed,OfficeAddress,FatherIndexinDB,MotherIndexinDB
+	std::string strName = m_strFirstName + "," + m_strLastName;
+	if(m_strFatherName == "")
+	{
+		m_strFatherName = "NA";
+	}
+	if(m_strMotherName == "")
+	{
+		m_strMotherName = "NA";
+	}
 	std::string strParentName = m_strFatherName + "," + m_strMotherName;
-	std::string dob = vformat(", D.O.B[%d-%d-%d],%d , ", m_nDOB_Day, m_nDOB_Month, m_nDOB_Year,m_nAge);
+	std::string dob = vformat(", %d-%d-%d, %d , ", m_nDOB_Day, m_nDOB_Month, m_nDOB_Year,m_nAge);
 	std::string ssn = ", " + m_nSSN + ", " ;
-	std::string hasChild = (m_bHasChildren) ? ", YES, " : ", NO, ";
+	std::string hasChild = (m_listChildNames.size() > 0) ? ", YES, " : ", NO, ";
 	std::string NoOfChild = std::to_string(m_listChildNames.size())+ ", ";//vformat("%d, ", m_nChildCount);
-	std::string IsEmpld = (m_bIsEmployed) ? ", YES, " : ", NO, ";
+	std::string IsEmpld = (true == m_bIsEmployed) ? ", YES, " : ", NO, ";
 	std::string childNames = " ";
+	
+	if(false == m_bIsEmployed)
+	{
+		m_strWorkAddress = "Not Employed";
+	}
+	else
+	{
+		if(m_strWorkAddress == "")
+		{
+		 m_strWorkAddress = "NA";
+		}
+	}
+	
 	for (auto child : m_listChildNames)
 	{
 		childNames = childNames + child + "/";
 	}
 	std::string events = " ";
+	
+	int eventscount = 0;
 	for (int i = 0; i < m_listEvents.size(); ++i)
 	{
 		events = ", " + m_listEvents[i].m_strEventName + ", " + m_listEvents[i].m_strEventComments+ "/" + m_listEvents[i].m_strDate;
+		eventscount++;
+	}
+	for (int i = eventscount; i < CUtil::m_nTotalEvents; i++)
+	{
+		events = ", " + events;
 	}
 
+	std::string FatherIndex = ", -1";
+	std::string MotherIndex = ", -1";
+	if  (m_nListFatherIndex>0)
+	{
+		FatherIndex = vformat(", %d ", m_nListFatherIndex); //", " + std::to_string(m_nListFatherIndex);
+	}
+	if (m_nListMotherIndex>0)
+	{
+		MotherIndex = vformat(", %d ", m_nListMotherIndex); //", " + std::to_string(m_nListMotherIndex);
+	}
 	std::string strFormtdInfo;
-	strFormtdInfo = strName +  dob + getGenderStr() + "," + m_strBirthPlace + "," + strParentName + ssn + m_strHomeAddress;
+	strFormtdInfo = m_uniqueID + "," + strName +  dob + getGenderStr() + "," + strParentName + ssn + m_strHomeAddress;
 	strFormtdInfo = strFormtdInfo + "," + getEducationStr() + "," + getMStsStr() + "," + m_strSpouseName + hasChild + NoOfChild;
-	strFormtdInfo = strFormtdInfo + childNames + IsEmpld + m_strWorkAddress + events;
+	strFormtdInfo = strFormtdInfo + childNames + IsEmpld + m_strWorkAddress + FatherIndex + MotherIndex + events;
 	return strFormtdInfo;
 }
 
@@ -358,7 +392,7 @@ const std::string CPersonInfo::getEducationStr()
 
 const std::string CPersonInfo::getMStsStr()
 {
-	std::string msts = "Single";
+	std::string msts = "NeverMarried";
 	if (m_nMaritalStatus == MARITAL_STATUS_MARRIED)
 	{
 		msts = "Married";
@@ -385,9 +419,9 @@ const std::string CPersonInfo::getGenderStr()
 	{
 		gen = "Female";
 	}
-	else if (m_nGender == GENDER_TYPE_TRANS)
+	else if (m_nGender == GENDER_TYPE_OTHER)
 	{
-		gen = "Transgen";
+		gen = "Other";
 	}
 	return gen;
 }

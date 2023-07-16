@@ -49,16 +49,6 @@ CHMMEvents::CHMMEvents(std::vector<std::string> hidden_states, std::vector<int> 
 	  {0.005, 0.3,  0.3,  0.3,  0.0, 0.095},
 	  {0.0, 0.0,  0.0,  0.00, 0.0, 0.0}
 	};
-
-	//CHILD, YOUNG, WORKINGAGE,ELDER 
-	/*std::vector<std::vector<double>> emission_matrixage = {
-	  {0.9, 0.6, 0.1, 0.0},
-	  {0.0, 0.0, 0.2, 0.0},
-	  {0.0, 0.0, 0.2, 0.05},
-	  {0.0, 0.0, 0.2, 0.2},
-	  {0.0, 0.3, 0.2, 0.005},
-	  {0.1, 0.1, 0.1, 0.7}
-	};*/
 	
 	//age_0_14,age_15_24,age_25_54,age_55_64,age_65_above
 	std::vector<std::vector<double>> emission_matrixage = {
@@ -98,6 +88,7 @@ CHMMEvents::CHMMEvents(std::vector<std::string> hidden_states, std::vector<int> 
 	for (const std::string& state : hidden_states_) {
 		EmissionProb ep;
 		int j = 0;
+		
 		for (const std::string& status : financial_status_) {
 			for (int age : age_range_) {
 				Observation obs{ age, status };
@@ -106,38 +97,38 @@ CHMMEvents::CHMMEvents(std::vector<std::string> hidden_states, std::vector<int> 
 				{
 					if(age<15)
 					{
-						ageProb = emission_matrixage[0][i];
+						ageProb = emission_matrixage[i][0];
 					}
 					else
 					{
-						ageProb = emission_matrixage[1][i];
+						ageProb = emission_matrixage[i][1];
 					}
 				}
 				else if (age >= 18 && age < 26)
 				{
-					ageProb = emission_matrixage[2][i];
+					ageProb = emission_matrixage[i][2];
 					if(age<25)
 					{
-						ageProb = emission_matrixage[1][i];
+						ageProb = emission_matrixage[i][1];
 					}
 				}
 				else if (age > 25 && age <= 55)
 				{
-					ageProb = emission_matrixage[2][i];
+					ageProb = emission_matrixage[i][2];
 				}
 				else if (age > 55 && age <= 65)
 				{
-					ageProb = emission_matrixage[3][i];
+					ageProb = emission_matrixage[i][3];
 				}
 				else
 				{
-					ageProb = emission_matrixage[4][i];
+					ageProb = emission_matrixage[i][4];
 				}
 				double finaprob = emission_matrixFsts[i][j];
 				double obs_prob = ageProb * finaprob;
 				if((ageProb==0.0)||(finaprob==0.0))
 				{
-				obs_prob=ageProb+finaprob;
+					obs_prob=ageProb+finaprob;
 				}
 				ep.probs[status + "_" + std::to_string(age)] = obs_prob;
 			}
@@ -205,7 +196,7 @@ std::vector<std::string> CHMMEvents::predict(std::vector<Observation>& observati
 void CHMMEvents::computeForwardProbs(const std::vector<Observation>& observations, std::vector<std::vector<double>>& forward_probs) const {
 
 	// Compute forward probabilities for first observation
-	for (size_t i = 0; i < hidden_states_.size(); ++i) {
+	for (int i = 0; i < hidden_states_.size(); ++i) {
 		double init_prob = init_probs_.at(hidden_states_[i]);
 		const EmissionProb& emit_prob = emit_probs_[i];
 		Observation ob = observations[0];
@@ -214,12 +205,12 @@ void CHMMEvents::computeForwardProbs(const std::vector<Observation>& observation
 	}
 
 	// Compute forward probabilities for subsequent observations
-	for (size_t t = 1; t < observations.size(); ++t) {
-		for (size_t i = 0; i < hidden_states_.size(); ++i) {
+	for (int t = 1; t < observations.size(); ++t) {
+		for (int i = 0; i < hidden_states_.size(); ++i) {
 			double sum = 0.0;
 			const EmissionProb& emit_prob = emit_probs_[i];
 			double obs_prob = emit_prob.probs.at(observations[t].financial_status + "_" + std::to_string(observations[t].age));
-			for (size_t j = 0; j < hidden_states_.size(); ++j) {
+			for (int j = 0; j < hidden_states_.size(); ++j) {
 				double trans_prob = trans_probs_.at(hidden_states_[j]).at(hidden_states_[i]);
 				sum += forward_probs[t - 1][j] * trans_prob;
 			}
@@ -231,7 +222,7 @@ void CHMMEvents::computeForwardProbs(const std::vector<Observation>& observation
 
 
 void CHMMEvents::computeBackwardProbs(const std::vector<Observation>& observations, std::vector<std::vector<double>>& backward_probs) const {
-	const int num_obs = observations.size();
+	const size_t num_obs = observations.size();
 	//std::vector<std::vector<double>> backward_probs(num_obs, std::vector<double>(hidden_states_.size(), 0.0));
 
 	for (int k = 0; k < observations.size(); ++k)
@@ -277,8 +268,8 @@ void CHMMEvents::computeBackwardProbs(const std::vector<Observation>& observatio
 
 std::vector<std::string> CHMMEvents::computeViterbiPath(const std::vector<std::vector<double>>& forward_probs,
 	const std::vector<std::vector<double>>& backward_probs) {
-	const int T = forward_probs.size();
-	const int N = hidden_states_.size();
+	const size_t T = forward_probs.size();
+	const size_t N = hidden_states_.size();
 	std::vector<std::string> path(T);
 
 	// Find the state with maximum probability at time T-1
@@ -387,7 +378,7 @@ double CHMMEvents::logSumExp(std::vector<double> x) const {
 
 
 std::vector<std::vector<double>> CHMMEvents::compute_posterior_probabilities(const std::vector<std::vector<double>>& alpha,const std::vector<std::vector<double>>& beta) const {
-	int T = alpha.size();
+	size_t T = alpha.size();
 	std::vector<std::vector<double>> posterior_probs(T, std::vector<double>(hidden_states_.size()));
 
 	for (int t = 0; t < T; ++t) {
@@ -445,8 +436,8 @@ std::vector<std::vector<std::vector<double>>> CHMMEvents::compute_joint_probabil
 
 double CHMMEvents::computeObsSeqProb(const std::vector<Observation>& obs_sequence) const
 {
-	int num_states = hidden_states_.size();
-	int T = obs_sequence.size();
+	size_t num_states = hidden_states_.size();
+	size_t T = obs_sequence.size();
 	std::vector<std::vector<double>> alpha(T, std::vector<double>(num_states));
 
 	// Compute alpha values for the first observation
@@ -522,7 +513,7 @@ void CHMMEvents::train(const std::vector<std::pair<std::vector<std::pair<int, st
 		finstatus_to_index_[financial_status_[i]] = i;
 	}
 
-	int num_states_ = hidden_states_.size();
+	size_t num_states_ = hidden_states_.size();
 	for (int iter = 0; iter < num_iterations; iter++) {
 		double log_likelihood = 0.0;
 		std::unordered_map<std::string, double> state_count;

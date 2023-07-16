@@ -1,5 +1,6 @@
 #include "../include/HMM_Career.h"
 
+
 CHMM_Career::CHMM_Career()
 {
 	n_states = CAREER_STATE_END;
@@ -55,7 +56,7 @@ void CHMM_Career::set_emission(std::vector<std::vector<double>>& emiss_probs) {
 
 
 std::vector<double> CHMM_Career::forward_algorithm(std::vector<int>& observations) {
-	int T = observations.size(); // length of observation sequence
+	size_t T = observations.size(); // length of observation sequence
 	std::vector<std::vector<double>> alpha(T, std::vector<double>(n_states));
 	std::vector<double> c(T);
 
@@ -111,8 +112,8 @@ std::vector<double> CHMM_Career::forward_algorithm(std::vector<int>& observation
 std::vector<CareerState_> CHMM_Career::predict(const std::vector<FinacialObsSymbol>& observations, int num_steps)
 {
 	std::vector<CareerState_> state_sequence(num_steps); // Initialize state sequence
-	int num_states = m_states.size();
-	int T = observations.size();
+	size_t num_states = m_states.size();
+	size_t T = observations.size();
 
 	// Initialize delta and psi matrices
 	std::vector<std::vector<double>> delta(T, std::vector<double>(num_states, 0));
@@ -152,7 +153,7 @@ std::vector<CareerState_> CHMM_Career::predict(const std::vector<FinacialObsSymb
 	state_sequence[T - 1] = m_states[max_index];
 
 	// Backtracking step
-	for (int t = T - 2; t >= 0; t--) {
+	for (size_t t = T - 2; t >= 0; t--) {
 		max_index = psi[t + 1][max_index];
 		state_sequence[t] = m_states[max_index];
 	}

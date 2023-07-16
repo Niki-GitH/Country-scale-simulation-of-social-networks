@@ -14,6 +14,16 @@
 #define PLATFORM_TYPE_LINUX 0
 #endif
 
+
+#define ELDERLY_DOB_ST   1940
+#define ELDERLY_DOB_EN   1955
+#define WORKING_DOB_ST	 1966
+#define WORKING_DOB_EN   2004
+#define CHILD_DOB_ST	 2008
+#define CHILD_DOB_EN     2022
+#define MAX_CHILD_PER_PERSON	5
+#define MAX_MARRIAGES_PER_PERSON	4
+
 typedef enum enEvent
 {
 	EVENT_TYPE_START = -1,
@@ -29,7 +39,7 @@ typedef enum enEvent
 
 typedef enum enMaritalSts
 {
-	MARITAL_STATUS_SINGLE = 0,
+	MARITAL_STATUS_NEVER_MARRIED = 0,
 	MARITAL_STATUS_MARRIED,
 	MARITAL_STATUS_WIDOWED,
 	MARITAL_STATUS_DIVORCED,
@@ -89,7 +99,7 @@ typedef enum enGenderInfo
 {
 	GENDER_TYPE_MALE = 0,
 	GENDER_TYPE_FEMALE,
-	GENDER_TYPE_TRANS,
+	GENDER_TYPE_OTHER,
 	EVENT_INFO_END,
 }GenderInfo_;
 
