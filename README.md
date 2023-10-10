@@ -55,6 +55,15 @@ From build directory.
  arg1 : 'data' folder path where all ini file and other inputs are present.
  arg2 : 1 or 0. 1: Generate family tree. 0: Do not generate family tree.
 
+
+## Simple Analysis 
+After generating population data and family edges. Used python script to perform below analysis.
+
+![plot](./data-analysis/out/age_distribution.png)
+![plot](./data-analysis/out/age_gender_distribution.png)
+![plot](./data-analysis/out/degree_histogram.png)
+![plot](./data-analysis/out/individual_layer_conn.png)
+
 ## Contributing
 
 1. Fork it!
