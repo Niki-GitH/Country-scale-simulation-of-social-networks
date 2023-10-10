@@ -5,6 +5,8 @@
 #include <fstream>
 #include <sstream>
 #include <regex>
+#include <map>
+#include <mutex>
 #include "defines.h"
 
 #define SECTION_POP "Population"
@@ -76,70 +78,65 @@
 
 class CINIConfigParser
 {
+	private:
+	std::map<std::string, std::map<std::string, std::string>> data;
+	mutable std::mutex mutex_;
+	std::string m_folder_path;
 public:
-	static void parse(const std::string& fileName);
+	CINIConfigParser(const std::string &filename);
 
-	static long GetIntValue(const std::string& section, const std::string& key, long defaultValue = 0);
-	static double GetDblValue(const std::string& section, const std::string& key, double defaultValue = 0.0);
-	static std::string GetStringValue(const std::string& section, const std::string& key, const std::string& defaultValue = "");
-	static int GetNumOfSchools() { return static_cast<int>(m_schools.size()); }
-	static int GetNumOfUniversities() { return static_cast<int>(m_universities.size()); }
-	static int GetNumOfOffices() { return static_cast<int>(m_offices.size()); }
+	long GetIntValue(const std::string &section, const std::string &key) const;
 
-	static std::pair<std::string, std::string> GetOfficeAddress(int index)
+	double GetDblValue(const std::string &section, const std::string &key) const;
+
+	std::string GetStringValue(const std::string &section, const std::string &key) const;
+
+	iniAddress GetOfficeAddress_(int index);
+
+	iniAddress GetSchoolNameNAddress_(int index);
+
+	iniAddress GetUnivstyNameNAddress_(int index);
+
+	std::string getFolderPath();
+
+	void setFolderPath(std::string path);
+
+	long GetNumOfSchools() { return GetIntValue(SECTION_SCHOOLS, KEY_NUM_OF_SCHOOLS); }
+	long GetNumOfUniversities() { return GetIntValue(SECTION_UNIS, KEY_NUM_OF_UNI); }
+	long GetNumOfOffices() { return GetIntValue(SECTION_OFFICES, KEY_NUM_OF_OFFICES); }
+
+	// Copy constructor
+	CINIConfigParser(const CINIConfigParser &other)
 	{
-		if (index >= m_offices.size())
-		{
-			return std::make_pair("****","NA");
-		}
-		else
-		{
-			return m_offices[index];
-		}
+		std::lock_guard<std::mutex> lock(other.mutex_);
+		data = other.data;
+		m_folder_path = other.m_folder_path;
 	}
 
-	static std::string GetSchoolAddress(int index)
+	// Copy assignment operator
+	CINIConfigParser &operator=(const CINIConfigParser &other)
 	{
-		if (index >= m_schools.size())
+		if (this != &other)
 		{
-			return "****";
+			std::lock_guard<std::mutex> lock(mutex_);
+			std::lock_guard<std::mutex> otherLock(other.mutex_);
+			data = other.data;
+			m_folder_path = other.m_folder_path;
 		}
-		else
-		{
-			return m_schools[index].second;
-		}
+		return *this;
 	}
 
-	static std::pair<std::string, std::string> GetSchoolNameNAddress(int index)
-	{
-		if (index >= m_schools.size())
-		{
-			return std::make_pair("****", "****");
-		}
-		else
-		{
-			return m_schools[index];
-		}
-	}
-
-	static std::pair<std::string, std::string> GetUnivstyNameNAddress(int index)
-	{
-		if (index >= m_universities.size())
-		{
-			return std::make_pair("****", "****");
-		}
-		else
-		{
-			return m_universities[index];
-		}
-	}
+	void printMapData();
 
 private:
-	static void split(std::string str, char del, std::vector < std::string >& out);
-private:
-	static std::unordered_map<std::string, std::unordered_map<std::string, std::string>> m_values;
-	static std::vector<std::pair<std::string, std::string>> m_schools;
-	static std::vector<std::pair<std::string, std::string>> m_universities;
-	static std::vector<std::pair<std::string, std::string>> m_offices;
+	void parseLine(const std::string &line, std::string &current_section);
+
+	// template <typename T>
+	// T convertValue(const std::string& str) const;
+
+	iniAddress parseAddress(const std::string &entry) const;
+
+	std::string trim(const std::string &str);
+
+	
 };
-

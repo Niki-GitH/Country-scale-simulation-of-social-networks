@@ -2,7 +2,7 @@
 Sweden,Stockholm,Upplands Vasby,0114TB103,Lowenstromska lasarettet,581,66,17.91605164,59.54166618
 Sweden,Stockholm,Upplands Vasby,0114TB107,Batbyggartorp och Harva,221,48,17.85104274,59.51796331
 Sweden,Stockholm,Vallentuna,0115TB101,Brottby,248,38,18.24202508,59.56313038
-Sweden,Stockholm,Vallentuna,0115TB102,"Ekskogen, algeby och Langsjotorp",347,215,18.36774244,59.60872253
+Sweden,Stockholm,Vallentuna,0115TB102,Ekskogen  algeby och Langsjotorp,347,215,18.36774244,59.60872253
 Sweden,Stockholm,Vallentuna,0115TB103,Ekskogen,263,61,18.22613509,59.63915808
 Sweden,Stockholm,Vallentuna,0115TB104,Johannesudd,306,16,18.03219273,59.55237784
 Sweden,Stockholm,Vallentuna,0115TB105,Karby,838,55,18.2197381,59.56116929
@@ -22,7 +22,7 @@ Sweden,Stockholm,osteraker,0117TB113,Spanlot,473,23,18.31478651,59.49506529
 Sweden,Stockholm,osteraker,0117TB154,Nas*,291,23,18.26595057,59.4679358
 Sweden,Stockholm,osteraker,0117TC112,akersberga,35747,2534,18.24405741,59.48763296
 Sweden,Stockholm,Varmdo,0120TB101,Bjornomalmen och Klacknaset,647,155,18.52090526,59.2225315
-Sweden,Stockholm,Varmdo,0120TB102,"Gronskan, Vedhamn och Baldersnas",273,191,18.47292931,59.23392495
+Sweden,Stockholm,Varmdo,0120TB102,Gronskan  Vedhamn och Baldersnas,273,191,18.47292931,59.23392495
 Sweden,Stockholm,Varmdo,0120TB103,Brunn,1323,204,18.42594973,59.28422973
 Sweden,Stockholm,Varmdo,0120TB104,Betsede,319,56,18.42819828,59.32917521
 Sweden,Stockholm,Varmdo,0120TB105,Djuro,1179,246,18.69552404,59.31139094
@@ -55,7 +55,7 @@ Sweden,Stockholm,Ekero,0125TB113,Tureholm,1097,329,17.7449875,59.31987678
 Sweden,Stockholm,Ekero,0125TB114,alvnas,802,58,17.76618573,59.28789808
 Sweden,Stockholm,Ekero,0125TB115,olsta,730,239,17.66636629,59.40417128
 Sweden,Stockholm,Ekero,0125TB120,Ekeby tomtomrade,210,111,17.60171588,59.36346729
-Sweden,Stockholm,Ekero,0125TB157,"Slottshagen, Bona, Helgo bol och Kungens tappa",291,99,17.67348874,59.28012837
+Sweden,Stockholm,Ekero,0125TB157,Slottshagen  Bona  Helgo bol och Kungens tappa,291,99,17.67348874,59.28012837
 Sweden,Stockholm,Ekero,0125TB161,Sanga Saby,250,34,17.64959427,59.36549932
 Sweden,Stockholm,Ekero,0125TB173,Jungfrusund,299,14,17.84468474,59.27320087
 Sweden,Stockholm,Ekero,0125TC102,Ekero,12332,605,17.79358689,59.28096028
@@ -96,7 +96,7 @@ Sweden,Stockholm,Sodertalje,0181TB102,Holo,1602,168,17.53179071,59.02276192
 Sweden,Stockholm,Sodertalje,0181TB103,Jarna,6153,392,17.56103651,59.08701809
 Sweden,Stockholm,Sodertalje,0181TB104,Molnbo,1131,150,17.41838577,59.0491335
 Sweden,Stockholm,Sodertalje,0181TB105,Pershagen,2190,106,17.65702075,59.15143966
-Sweden,Stockholm,Sodertalje,0181TB106,"Aska, Tuna och Sandviken*",877,262,17.48892297,59.26426842
+Sweden,Stockholm,Sodertalje,0181TB106,Aska  Tuna och Sandviken*,877,262,17.48892297,59.26426842
 Sweden,Stockholm,Sodertalje,0181TB107,Nibble,249,48,17.62357694,59.06603501
 Sweden,Stockholm,Sodertalje,0181TB110,Vattubrinken,396,94,17.58181442,59.24516756
 Sweden,Stockholm,Sodertalje,0181TB111,Viksater och Viksberg,936,155,17.61771917,59.24214024
@@ -122,7 +122,7 @@ Sweden,Stockholm,Norrtalje,0188TB104,Finsta,248,44,18.49468878,59.73602442
 Sweden,Stockholm,Norrtalje,0188TB105,Grisslehamn,410,456,18.77178391,60.09350419
 Sweden,Stockholm,Norrtalje,0188TB106,Hallstavik,4741,494,18.5963561,60.04629915
 Sweden,Stockholm,Norrtalje,0188TB107,Herrang,350,188,18.63886528,60.13224092
-Sweden,Stockholm,Norrtalje,0188TB108,"Nabbo, Graddo och Ravsnas",579,584,18.99538566,59.75628558
+Sweden,Stockholm,Norrtalje,0188TB108,Nabbo  Graddo och Ravsnas,579,584,18.99538566,59.75628558
 Sweden,Stockholm,Norrtalje,0188TB110,Riala,361,130,18.51636351,59.63756628
 Sweden,Stockholm,Norrtalje,0188TB111,Rimbo,5223,347,18.35107324,59.74594027
 Sweden,Stockholm,Norrtalje,0188TB112,Ranas,423,49,18.30410451,59.80438852
@@ -136,10 +136,10 @@ Sweden,Stockholm,Norrtalje,0188TB119,Sattra,376,177,18.43436629,59.61854229
 Sweden,Stockholm,Norrtalje,0188TB120,almsta,1532,251,18.80271568,59.96952522
 Sweden,Stockholm,Norrtalje,0188TB122,Hastangen och Mora,743,244,18.66862123,59.63964613
 Sweden,Stockholm,Norrtalje,0188TB138,Oxhalso,224,350,18.94267351,59.63087427
-Sweden,Stockholm,Norrtalje,0188TB147,"Hattudden, Bjornosund och Bjorknas*",343,394,18.86021364,59.75857494
+Sweden,Stockholm,Norrtalje,0188TB147,Hattudden  Bjornosund och Bjorknas*,343,394,18.86021364,59.75857494
 Sweden,Stockholm,Norrtalje,0188TB172,Malstaby,219,57,18.63277405,59.77577191
 Sweden,Stockholm,Norrtalje,0188TB187,Husby*,211,50,18.53112857,59.74695011
-Sweden,Stockholm,Norrtalje,0188TB189,"Grovstanas, Hysingsvik och Solo",213,179,18.72717104,59.67828735
+Sweden,Stockholm,Norrtalje,0188TB189,Grovstanas  Hysingsvik och Solo,213,179,18.72717104,59.67828735
 Sweden,Stockholm,Norrtalje,0188TB223,Tranvik och Ekebyholmshojden*,235,39,18.38457294,59.76291241
 Sweden,Stockholm,Norrtalje,0188TC109,Norrtalje,22018,1092,18.71384805,59.75596818
 Sweden,Stockholm,Sigtuna,0191TB101,Granby,299,52,17.6281342,59.65682394
@@ -285,7 +285,7 @@ Sweden,Sodermanland,Eskilstuna,0484TB103,Balgviken,217,41,16.45913993,59.2491780
 Sweden,Sodermanland,Eskilstuna,0484TB105,Hallsta,888,100,16.45436122,59.29337823
 Sweden,Sodermanland,Eskilstuna,0484TB106,Hallberga,610,65,16.59886099,59.31972888
 Sweden,Sodermanland,Eskilstuna,0484TB107,Hallbybrunn,3394,302,16.42297902,59.39242389
-Sweden,Sodermanland,Eskilstuna,0484TB108,"Kullersta, Kolsta och Hensta",493,347,16.52496299,59.43975485
+Sweden,Sodermanland,Eskilstuna,0484TB108,Kullersta  Kolsta och Hensta,493,347,16.52496299,59.43975485
 Sweden,Sodermanland,Eskilstuna,0484TB109,Kjulaas,956,119,16.68012339,59.38774715
 Sweden,Sodermanland,Eskilstuna,0484TB111,Skiftinge,5150,201,16.54388519,59.39389038
 Sweden,Sodermanland,Eskilstuna,0484TB112,Sundbyholm,1100,342,16.61066402,59.438351
@@ -439,7 +439,7 @@ Sweden,Jonkoping,Vaggeryd,0665TC105,Vaggeryd,5613,533,14.13571959,57.49708586
 Sweden,Jonkoping,Jonkoping,0680TB101,Bankeryd,8838,751,14.11624473,57.8499376
 Sweden,Jonkoping,Jonkoping,0680TB103,Bottnaryd,810,87,13.8266824,57.77105536
 Sweden,Jonkoping,Jonkoping,0680TB104,olmstad,434,79,14.40669667,57.92469597
-Sweden,Jonkoping,Jonkoping,0680TB105,"Bosgard, Rudu och Gissebo",226,63,14.27148134,57.84343542
+Sweden,Jonkoping,Jonkoping,0680TB105,Bosgard  Rudu och Gissebo,226,63,14.27148134,57.84343542
 Sweden,Jonkoping,Jonkoping,0680TB106,Granna,2716,185,14.46849409,58.021036
 Sweden,Jonkoping,Jonkoping,0680TB108,Kaxholmen,1792,161,14.305502,57.85256766
 Sweden,Jonkoping,Jonkoping,0680TB109,Kortebo,861,110,14.14418253,57.81657741
@@ -453,7 +453,7 @@ Sweden,Jonkoping,Jonkoping,0680TB117,Tunnerstad,339,133,14.33038881,58.05090154
 Sweden,Jonkoping,Jonkoping,0680TB118,oggestorp,245,40,14.38307288,57.72286045
 Sweden,Jonkoping,Jonkoping,0680TB119,orserum,369,72,14.57572964,58.00558536
 Sweden,Jonkoping,Jonkoping,0680TB156,Tovrida udde*,203,51,14.38694198,57.74934941
-Sweden,Jonkoping,Jonkoping,0680TB158,"Hulukvarn, Ulvstorp, Vastersjon och Hedenstorp",354,241,14.0860034,57.76375923
+Sweden,Jonkoping,Jonkoping,0680TB158,Hulukvarn  Ulvstorp  Vastersjon och Hedenstorp,354,241,14.0860034,57.76375923
 Sweden,Jonkoping,Jonkoping,0680TC107,Jonkoping,100579,4764,14.13282362,57.74509114
 Sweden,Jonkoping,Nassjo,0682TB101,Anneberg,859,118,14.80319934,57.72248971
 Sweden,Jonkoping,Nassjo,0682TB102,Bodafors,2045,242,14.70221773,57.50635568
@@ -500,7 +500,7 @@ Sweden,Jonkoping,Eksjo,0686TB105,Ingatorp,467,110,15.41322515,57.638126
 Sweden,Jonkoping,Eksjo,0686TB106,Mariannelund,1591,223,15.57208281,57.6124545
 Sweden,Jonkoping,Eksjo,0686TC102,Eksjo,11023,922,14.96847971,57.66050075
 Sweden,Jonkoping,Tranas,0687TB101,Gripenberg,271,55,14.85510784,57.99211399
-Sweden,Jonkoping,Tranas,0687TB102,"Hatte, Seglarvik och Sandvik",259,76,15.04165924,58.02978256
+Sweden,Jonkoping,Tranas,0687TB102,Hatte  Seglarvik och Sandvik,259,76,15.04165924,58.02978256
 Sweden,Jonkoping,Tranas,0687TB103,Sommen,766,112,14.96471838,58.13489652
 Sweden,Jonkoping,Tranas,0687TB108,Norraby,250,35,15.00549895,58.05830268
 Sweden,Jonkoping,Tranas,0687TC104,Tranas,14789,1042,14.97827224,58.03129605
@@ -690,7 +690,7 @@ Sweden,Blekinge,Ronneby,1081TB103,Eringsboda,303,77,15.36685346,56.43987087
 Sweden,Blekinge,Ronneby,1081TB104,Hallabro,244,61,15.10291478,56.38929093
 Sweden,Blekinge,Ronneby,1081TB105,Johannishus,743,100,15.41947872,56.2240318
 Sweden,Blekinge,Ronneby,1081TB106,Kallinge,4841,539,15.28918542,56.25019993
-Sweden,Blekinge,Ronneby,1081TB107,"Bokenas, Korsanas och Kuggeboda",464,244,15.34233683,56.1462747
+Sweden,Blekinge,Ronneby,1081TB107,Bokenas  Korsanas och Kuggeboda,464,244,15.34233683,56.1462747
 Sweden,Blekinge,Ronneby,1081TB108,Listerby,1023,213,15.39726582,56.19189282
 Sweden,Blekinge,Ronneby,1081TB110,Ronnebyhamn,728,190,15.27491241,56.17816462
 Sweden,Blekinge,Ronneby,1081TB111,Spjalko och Saxemara,471,212,15.22196525,56.16521297
@@ -774,7 +774,7 @@ Sweden,Skane,Sjobo,1265TB104,Lovestad,671,111,13.89184728,55.65325835
 Sweden,Skane,Sjobo,1265TB107,Sovde,369,75,13.66415293,55.58814168
 Sweden,Skane,Sjobo,1265TB108,Vollsjo,843,148,13.78680246,55.69933996
 Sweden,Skane,Sjobo,1265TB109,asperod,262,36,13.91634894,55.60941028
-Sweden,Skane,Sjobo,1265TB119,"Humlamaden och Hemmestorps bjorke, boke och fure",200,63,13.53008803,55.61637528
+Sweden,Skane,Sjobo,1265TB119,Humlamaden och Hemmestorps bjorke  boke och fure,200,63,13.53008803,55.61637528
 Sweden,Skane,Sjobo,1265TC105,Sjobo,8478,782,13.68533478,55.63133638
 Sweden,Skane,Horby,1266TB103,Osbyholm,307,44,13.6100061,55.84874173
 Sweden,Skane,Horby,1266TB104,onnekop,209,57,13.87332332,55.78836332
@@ -882,7 +882,7 @@ Sweden,Skane,Ystad,1286TB106,Nybrostrand,1338,145,13.94246141,55.43543982
 Sweden,Skane,Ystad,1286TB107,Stora Herrestad,315,55,13.87388808,55.47415927
 Sweden,Skane,Ystad,1286TB108,Svarte,1005,96,13.71401297,55.43168537
 Sweden,Skane,Ystad,1286TB109,Sovestad,366,52,13.79742094,55.50135715
-Sweden,Skane,Ystad,1286TB121,"Trunnerup, Bleckstorp och Rogla*",204,113,13.63488417,55.50807384
+Sweden,Skane,Ystad,1286TB121,Trunnerup  Bleckstorp och Rogla*,204,113,13.63488417,55.50807384
 Sweden,Skane,Ystad,1286TC110,Ystad,20195,1099,13.83339744,55.43772852
 Sweden,Skane,Trelleborg,1287TB101,Alstad,350,56,13.20282432,55.4502935
 Sweden,Skane,Trelleborg,1287TB102,Anderslov,1958,135,13.31748621,55.4387809
@@ -1031,7 +1031,7 @@ Sweden,Halland,Varberg,1383TB121,Varobacka,863,150,12.17893038,57.2473853
 Sweden,Halland,Varberg,1383TB122,arnas,730,353,12.20028293,57.19992849
 Sweden,Halland,Varberg,1383TB123,asby,510,104,12.28869765,57.23167169
 Sweden,Halland,Varberg,1383TB149,Moarna,207,63,12.35493383,57.04691233
-Sweden,Halland,Varberg,1383TB155,"Ringhals, Skallakra och Lingome",252,227,12.10583765,57.25926855
+Sweden,Halland,Varberg,1383TB155,Ringhals  Skallakra och Lingome,252,227,12.10583765,57.25926855
 Sweden,Halland,Varberg,1383TC119,Varberg,36327,2421,12.26137942,57.09176684
 Sweden,Halland,Kungsbacka,1384TB101,Roda holme,673,208,11.97553113,57.37160755
 Sweden,Halland,Kungsbacka,1384TB105,Bueras,768,91,11.96999254,57.42466916
@@ -1094,7 +1094,7 @@ Sweden,Vastra Gotaland,Orust,1421TC102,Henan,2405,528,11.66901832,58.23510249
 Sweden,Vastra Gotaland,Sotenas,1427TB101,Bovallstrand,455,136,11.32446205,58.47466006
 Sweden,Vastra Gotaland,Sotenas,1427TB103,Hunnebostrand,2006,350,11.30452104,58.44232311
 Sweden,Vastra Gotaland,Sotenas,1427TB105,Malmon,267,106,11.33134032,58.34871875
-Sweden,Vastra Gotaland,Sotenas,1427TC104,"Smogen, Kungshamn och Vajern*",4743,503,11.23281011,58.36966449
+Sweden,Vastra Gotaland,Sotenas,1427TC104,Smogen  Kungshamn och Vajern*,4743,503,11.23281011,58.36966449
 Sweden,Vastra Gotaland,Munkedal,1430TB101,Dingle,941,118,11.57754082,58.52394255
 Sweden,Vastra Gotaland,Munkedal,1430TB102,Hedekas,406,96,11.77881934,58.64312166
 Sweden,Vastra Gotaland,Munkedal,1430TB103,Hallevadsholm,780,102,11.52497549,58.57728507
@@ -1131,7 +1131,7 @@ Sweden,Vastra Gotaland,Vargarda,1442TC102,Vargarda,5863,521,12.8094303,58.035821
 Sweden,Vastra Gotaland,Bollebygd,1443TB102,Hultafors,324,72,12.71865048,57.6959192
 Sweden,Vastra Gotaland,Bollebygd,1443TB103,Olsfors,614,73,12.69707794,57.69164079
 Sweden,Vastra Gotaland,Bollebygd,1443TB104,Tollsjo,413,70,12.63298025,57.79122851
-Sweden,Vastra Gotaland,Bollebygd,1443TB111,"Dammkullen, Fjallastorp och Stenaskjum",256,81,12.53559436,57.68317451
+Sweden,Vastra Gotaland,Bollebygd,1443TB111,Dammkullen  Fjallastorp och Stenaskjum,256,81,12.53559436,57.68317451
 Sweden,Vastra Gotaland,Bollebygd,1443TC101,Bollebygd,4577,344,12.56353262,57.67386634
 Sweden,Vastra Gotaland,Grastorp,1444TC101,Grastorp,3084,266,12.68082823,58.33221993
 Sweden,Vastra Gotaland,Essunga,1445TB101,Frammestad,371,71,12.67010723,58.23445045
@@ -1167,7 +1167,7 @@ Sweden,Vastra Gotaland,Lilla Edet,1462TB102,Gota,1231,143,12.15108873,58.1028911
 Sweden,Vastra Gotaland,Lilla Edet,1462TB103,Hjartum,375,54,12.10831868,58.17990988
 Sweden,Vastra Gotaland,Lilla Edet,1462TB105,Lodose,1871,190,12.1619352,58.02902354
 Sweden,Vastra Gotaland,Lilla Edet,1462TB106,Nygard,575,143,12.21101895,58.05474336
-Sweden,Vastra Gotaland,Lilla Edet,1462TB113,"Grorod, Svenserod, Torskog och Kallerod",238,146,12.13705223,58.03873858
+Sweden,Vastra Gotaland,Lilla Edet,1462TB113,Grorod  Svenserod  Torskog och Kallerod,238,146,12.13705223,58.03873858
 Sweden,Vastra Gotaland,Lilla Edet,1462TC104,Lilla Edet,3884,315,12.13452102,58.13198099
 Sweden,Vastra Gotaland,Mark,1463TB101,Ubbhult norra,209,60,12.38131643,57.5955275
 Sweden,Vastra Gotaland,Mark,1463TB102,Berghem,381,85,12.59234931,57.46628465
@@ -1260,7 +1260,7 @@ Sweden,Vastra Gotaland,Uddevalla,1485TB104,Hogstorp,396,63,11.75971549,58.398251
 Sweden,Vastra Gotaland,Uddevalla,1485TB105,Kurverod,1405,67,11.89025659,58.36309756
 Sweden,Vastra Gotaland,Uddevalla,1485TB106,Lanesund och overby,643,114,11.70375834,58.34372375
 Sweden,Vastra Gotaland,Uddevalla,1485TB107,Ljungskile,4039,402,11.9256647,58.22450301
-Sweden,Vastra Gotaland,Uddevalla,1485TB108,"Strandskogen, Restenas och Ulvesund",466,229,11.88083953,58.23392228
+Sweden,Vastra Gotaland,Uddevalla,1485TB108,Strandskogen  Restenas och Ulvesund,466,229,11.88083953,58.23392228
 Sweden,Vastra Gotaland,Uddevalla,1485TB109,Smedserod,326,31,11.80589117,58.36652005
 Sweden,Vastra Gotaland,Uddevalla,1485TB112,Sjoskogen och Strand,476,165,11.84535945,58.27970128
 Sweden,Vastra Gotaland,Uddevalla,1485TB113,Kristevik och Sundsandvik,479,175,11.68385825,58.32003557
@@ -1569,7 +1569,7 @@ Sweden,Dalarna,Leksand,2029TB107,Siljansnas,1293,466,14.86485089,60.77576254
 Sweden,Dalarna,Leksand,2029TB108,Tallberg,867,529,14.99598037,60.82208814
 Sweden,Dalarna,Leksand,2029TB109,Vastanvik,513,237,14.94106329,60.73001621
 Sweden,Dalarna,Leksand,2029TC106,Leksand,6402,948,15.03041102,60.73189939
-Sweden,Dalarna,Rattvik,2031TB101,"Nittsjo, Satra och Backa",646,327,15.09078191,60.9217361
+Sweden,Dalarna,Rattvik,2031TB101,Nittsjo  Satra och Backa,646,327,15.09078191,60.9217361
 Sweden,Dalarna,Rattvik,2031TB102,Boda,521,280,15.22343913,61.0027785
 Sweden,Dalarna,Rattvik,2031TB103,Furudal,446,131,15.12330065,61.17017323
 Sweden,Dalarna,Rattvik,2031TB104,Gullerasen,370,265,15.18221823,61.05735988
@@ -1614,7 +1614,7 @@ Sweden,Dalarna,Falun,2080TB116,Sagmyra,631,157,15.29563034,60.71257051
 Sweden,Dalarna,Falun,2080TB117,Toftbyn,285,153,15.74730459,60.71592442
 Sweden,Dalarna,Falun,2080TB118,Vika,565,107,15.7065019,60.51306127
 Sweden,Dalarna,Falun,2080TB119,overtanger,237,118,15.74758391,60.86145513
-Sweden,Dalarna,Falun,2080TB175,"ostera, Uggelviken och Hokviken",280,113,15.63040272,60.64823224
+Sweden,Dalarna,Falun,2080TB175,ostera  Uggelviken och Hokviken,280,113,15.63040272,60.64823224
 Sweden,Dalarna,Falun,2080TC108,Falun,39492,2625,15.60310676,60.60522725
 Sweden,Dalarna,Borlange,2081TB102,Halvarsgardarna,299,70,15.38469583,60.40865153
 Sweden,Dalarna,Borlange,2081TB104,Norr Amsberg,239,72,15.35360151,60.53021569
@@ -1625,7 +1625,7 @@ Sweden,Dalarna,Borlange,2081TC101,Borlange,44898,3588,15.44705349,60.47654829
 Sweden,Dalarna,Sater,2082TB101,Enbacka och Mora,1571,209,15.60675799,60.40601021
 Sweden,Dalarna,Sater,2082TB106,Solvarbo,315,72,15.66967374,60.38950268
 Sweden,Dalarna,Sater,2082TB107,Skedvi kyrkby,400,79,15.8020975,60.40734961
-Sweden,Dalarna,Sater,2082TB125,"Naglarby, Lisselhaga och Storhaga",355,82,15.57695443,60.41826618
+Sweden,Dalarna,Sater,2082TB125,Naglarby  Lisselhaga och Storhaga,355,82,15.57695443,60.41826618
 Sweden,Dalarna,Sater,2082TC108,Sater,4731,486,15.74051571,60.33738205
 Sweden,Dalarna,Hedemora,2083TB101,Husby,253,66,16.00049807,60.3894036
 Sweden,Dalarna,Hedemora,2083TB102,Garpenberg,483,103,16.18807109,60.31398008
@@ -1712,7 +1712,7 @@ Sweden,Gavleborg,Soderhamn,2182TB105,Mohed,509,182,16.81221152,61.30094334
 Sweden,Gavleborg,Soderhamn,2182TB106,Sandarne,1901,400,17.15725421,61.26991946
 Sweden,Gavleborg,Soderhamn,2182TB111,Vallvik,233,101,17.17902705,61.18436995
 Sweden,Gavleborg,Soderhamn,2182TB112,Vannsatter,362,96,16.78852718,61.2604282
-Sweden,Gavleborg,Soderhamn,2182TB129,"Klapparvik, Malenedal och Kallvik",225,88,17.15014825,61.29097079
+Sweden,Gavleborg,Soderhamn,2182TB129,Klapparvik  Malenedal och Kallvik,225,88,17.15014825,61.29097079
 Sweden,Gavleborg,Soderhamn,2182TC109,Soderhamn,12213,937,17.07792127,61.31131806
 Sweden,Gavleborg,Bollnas,2183TB101,Arbra,2108,309,16.37077154,61.47301534
 Sweden,Gavleborg,Bollnas,2183TB103,Freluga,200,62,16.2910696,61.32498349
@@ -1731,7 +1731,7 @@ Sweden,Gavleborg,Hudiksvall,2184TB108,Iggesund,3437,434,17.08486893,61.64447157
 Sweden,Gavleborg,Hudiksvall,2184TB110,Njutanger,828,165,17.05681655,61.61236209
 Sweden,Gavleborg,Hudiksvall,2184TB111,Nasviken,967,186,16.87385245,61.75789395
 Sweden,Gavleborg,Hudiksvall,2184TB112,Sorforsa,1522,231,16.96976197,61.71790295
-Sweden,Gavleborg,Hudiksvall,2184TB142,"Tomta, Nasbyn och Hagen",215,96,16.55165456,61.81846658
+Sweden,Gavleborg,Hudiksvall,2184TB142,Tomta  Nasbyn och Hagen,215,96,16.55165456,61.81846658
 Sweden,Gavleborg,Hudiksvall,2184TC105,Hudiksvall,16559,1330,17.13717212,61.73121626
 Sweden,Vasternorrland,ange,2260TB101,Alby,292,147,15.47874252,62.49505983
 Sweden,Vasternorrland,ange,2260TB103,Ljungaverk och Fransta,2028,593,16.05287051,62.49697437
@@ -1764,7 +1764,7 @@ Sweden,Vasternorrland,Sundsvall,2281TB125,Stode,1313,399,16.57386123,62.41633595
 Sweden,Vasternorrland,Sundsvall,2281TB128,Svartvik,829,80,17.36021328,62.31340265
 Sweden,Vasternorrland,Sundsvall,2281TB129,Viforsen och Tunbyn,213,79,17.18658313,62.31059453
 Sweden,Vasternorrland,Sundsvall,2281TB131,Vattjom,535,134,17.02401852,62.36536574
-Sweden,Vasternorrland,Sundsvall,2281TB170,"as, Sladaviken och Bullas",231,109,17.47082376,62.43778057
+Sweden,Vasternorrland,Sundsvall,2281TB170,as  Sladaviken och Bullas,231,109,17.47082376,62.43778057
 Sweden,Vasternorrland,Sundsvall,2281TC127,Sundsvall,58813,4144,17.20970769,62.41851274
 Sweden,Vasternorrland,Kramfors,2282TB101,Bollstabruk,1812,490,17.67764853,62.98550335
 Sweden,Vasternorrland,Kramfors,2282TB102,Docksta,373,102,18.32548778,63.05351389
@@ -1844,13 +1844,13 @@ Sweden,Jamtland,Harjedalen,2361TB107,Vemdalen,622,401,13.86051511,62.45036024
 Sweden,Jamtland,Harjedalen,2361TB108,Ytterhogdal,461,228,14.92932574,62.17298958
 Sweden,Jamtland,Harjedalen,2361TB114,Bruksvallarna/Vaalleh,220,167,12.42705356,62.64139202
 Sweden,Jamtland,Harjedalen,2361TC105,Sveg,2509,328,14.36407325,62.03508092
-Sweden,Jamtland,ostersund,2380TB102,"Faker, alsta och Mansta*",330,115,14.57560148,62.98214764
+Sweden,Jamtland,ostersund,2380TB102,Faker  alsta och Mansta*,330,115,14.57560148,62.98214764
 Sweden,Jamtland,ostersund,2380TB103,Hara,231,103,14.46001547,63.03962281
 Sweden,Jamtland,ostersund,2380TB104,Haggenas,347,104,14.89142866,63.39005408
 Sweden,Jamtland,ostersund,2380TB105,Lunne,268,127,14.87495328,63.07978668
 Sweden,Jamtland,ostersund,2380TB106,Lit,1182,135,14.85359483,63.32247803
 Sweden,Jamtland,ostersund,2380TB107,Marieby,470,198,14.73568361,63.10629461
-Sweden,Jamtland,ostersund,2380TB108,"Malsta, Genvalla och Fillsta",216,66,14.5098355,63.150938
+Sweden,Jamtland,ostersund,2380TB108,Malsta  Genvalla och Fillsta,216,66,14.5098355,63.150938
 Sweden,Jamtland,ostersund,2380TB110,Orrviken,309,74,14.44601467,63.10308693
 Sweden,Jamtland,ostersund,2380TB112,Tandsbyn,444,135,14.71959341,63.00443972
 Sweden,Jamtland,ostersund,2380TB113,angsmon,1345,56,14.75588559,63.14329256
@@ -1997,7 +1997,7 @@ Sweden,Norrbotten,Pitea,2581TB113,Roknas,1272,318,21.18240447,65.34710105
 Sweden,Norrbotten,Pitea,2581TB114,Rosvik,1868,305,21.68370976,65.42856486
 Sweden,Norrbotten,Pitea,2581TB116,Sjulsmark,333,73,21.48583711,65.51911669
 Sweden,Norrbotten,Pitea,2581TB118,Svensbyn,329,61,21.23846463,65.31266666
-Sweden,Norrbotten,Pitea,2581TB128,"overmarken, Skatan och Maran",386,93,21.43032966,65.28573498
+Sweden,Norrbotten,Pitea,2581TB128,overmarken  Skatan och Maran,386,93,21.43032966,65.28573498
 Sweden,Norrbotten,Pitea,2581TC112,Pitea,23934,2385,21.5000949,65.29579987
 Sweden,Norrbotten,Boden,2582TB105,Harads,472,83,20.96410417,66.08260004
 Sweden,Norrbotten,Boden,2582TB107,Savast,3447,384,21.72656918,65.76416882

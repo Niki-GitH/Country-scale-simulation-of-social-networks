@@ -80,6 +80,7 @@ private:
 	bool IsFileBig();
 
 	void CloseCurrentAndCreateNewFile();
+
 };
 
 
